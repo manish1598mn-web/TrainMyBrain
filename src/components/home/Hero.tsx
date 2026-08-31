@@ -7,6 +7,7 @@ import { GameId } from '../../engine/game-engine/types';
 import { soundManager } from '../../lib/sound';
 import { NeuronActivityPulseBackground } from '../background/NeuronActivityPulseBackground';
 import { LevelProgressionPath } from './LevelProgressionPath';
+import neuralBrainImg from '../../assets/neural_brain.jpg';
 
 interface HeroProps {
   onExploreGames: () => void;
@@ -330,7 +331,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreGames, onPlayGame, onPlayMi
               
               {/* Brain Visual Asset */}
               <img 
-                src="/images/neural_brain.jpg" 
+                src={neuralBrainImg} 
                 alt="Anatomical Brain Diagram"
                 className="w-full h-full object-cover rounded-[22px] filter contrast-105"
               />
