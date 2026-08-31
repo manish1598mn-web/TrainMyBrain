@@ -1,32 +1,25 @@
-# React + TypeScript + Vite
+# ?? TrainMyBrain — Cognitive Speed & Mental Training Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A state-of-the-art, client-first cognitive reflex, working memory, and mental agility platform.
 
-Currently, two official plugins are available:
+## ?? Features
+- ? **Pro Calculations**: Flash mental arithmetic buffer scaling from 1200ms to 250ms.
+- ?? **Word Speed**: Verbal discrimination & root etymology under sub-second pressure.
+- ?? **Boggle**: 2D multi-directional spatial search powered by prefix trie algorithms.
+- ?? **Sudoku Reflex**: Pure constraint deduction (S1–S14 taxonomy) with zero trial-and-error.
+- ?? **Reasoning Puzzles**: Multi-variable relational logic across 6 distinct disciplines.
+- ??? **Foundational Training Mode**: 10-level progressive builder starting at 1% difficulty.
+- ?? **Time-Spent Focus Streak**: Cumulative focus time tracking with 7 milestones.
+- ?? **PWA & Offline Support**: Standalone installable app with 100% offline capability.
+- ?? **Verified Certificate Exporter**: High-resolution 1200x675 HD PNG credential export.
+- ?? **Keyboard Navigation**: Press \?\ anytime for full hardware shortcuts guide.
+- ?? **Synthesized Soundscapes**: 4 Web Audio profiles (Zen Chimes, Subtle Tech, Retro, Mute).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ??? Tech Stack
+- **Framework**: React 19 + TypeScript + Vite
+- **Styling**: Tailwind CSS
+- **State & Storage**: Zustand + Local-First client storage
+- **Audio**: Web Audio API Synthesizer
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## ?? Live Website
+- [https://manish1598mn-web.github.io/TrainMyBrain/](https://manish1598mn-web.github.io/TrainMyBrain/)
