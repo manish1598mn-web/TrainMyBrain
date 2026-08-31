@@ -1,0 +1,26 @@
+{
+  "name": "TrainMyBrain — Cognitive Speed & Mental Fitness",
+  "short_name": "TrainMyBrain",
+  "description": "Universal cognitive speed, flash calculation, working memory, and logical reasoning training platform.",
+  "start_url": "/",
+  "id": "/",
+  "display": "standalone",
+  "background_color": "#0B0F17",
+  "theme_color": "#0B0F17",
+  "orientation": "portrait-primary",
+  "categories": ["education", "games", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
