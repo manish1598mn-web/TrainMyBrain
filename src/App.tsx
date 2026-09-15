@@ -190,6 +190,7 @@ export function App() {
     mode?: string;
   }) => {
     if (!activeGameId) return;
+    if (activeResult) return;
 
     if (activeGameId === 'mindmix' || activeGameId === 'training') {
       const fakeResult: GameResult = {
@@ -228,7 +229,8 @@ export function App() {
       data.timeMs,
       data.score,
       data.mistakes,
-      data.mode || activeGameMode
+      data.mode || activeGameMode,
+      activeGameLevel
     );
 
     // Record cumulative time spent and problems metrics
@@ -356,8 +358,8 @@ export function App() {
                     <WordSpeedView
                       level={activeGameLevel}
                       timer={timer}
-                      isPaused={isPaused}
-                      isReady={isReady}
+                      isPaused={isPaused || !!activeResult}
+                      isReady={isReady && !activeResult}
                       customSeed={customSeed}
                       onComplete={handleGameComplete}
                     />
@@ -367,8 +369,8 @@ export function App() {
                     <BoggleView
                       level={activeGameLevel}
                       timer={timer}
-                      isPaused={isPaused}
-                      isReady={isReady}
+                      isPaused={isPaused || !!activeResult}
+                      isReady={isReady && !activeResult}
                       customSeed={customSeed}
                       onComplete={handleGameComplete}
                     />
@@ -378,8 +380,8 @@ export function App() {
                     <AnzanView
                       level={activeGameLevel}
                       timer={timer}
-                      isPaused={isPaused}
-                      isReady={isReady}
+                      isPaused={isPaused || !!activeResult}
+                      isReady={isReady && !activeResult}
                       customSeed={customSeed}
                       onComplete={handleGameComplete}
                     />
@@ -389,8 +391,8 @@ export function App() {
                     <SudokuView
                       level={activeGameLevel}
                       timer={timer}
-                      isPaused={isPaused}
-                      isReady={isReady}
+                      isPaused={isPaused || !!activeResult}
+                      isReady={isReady && !activeResult}
                       customSeed={customSeed}
                       onComplete={handleGameComplete}
                     />
@@ -400,8 +402,8 @@ export function App() {
                     <ZebraView
                       level={activeGameLevel}
                       timer={timer}
-                      isPaused={isPaused}
-                      isReady={isReady}
+                      isPaused={isPaused || !!activeResult}
+                      isReady={isReady && !activeResult}
                       customSeed={customSeed}
                       onComplete={handleGameComplete}
                     />

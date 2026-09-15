@@ -37,6 +37,8 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
   const [mistakes, setMistakes] = useState(0);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; isGood: boolean } | null>(null);
   const [timeRemainingSec, setTimeRemainingSec] = useState(() => board.timeAllowedSec);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const isCompletedRef = useRef(false);
 
   const boardRef = useRef<HTMLDivElement>(null);
 
@@ -51,6 +53,8 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
     setMistakes(0);
     setFeedbackMsg(null);
     setTimeRemainingSec(b.timeAllowedSec);
+    setIsCompleted(false);
+    isCompletedRef.current = false;
   }, [level, customSeed]);
 
   // Current formed word string from path
@@ -58,11 +62,25 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
   const targetWords = board.targetWordCount;
   const isGoalReached = foundWords.size >= targetWords;
 
-  // Session completion handler
-  const handleTimeUp = useCallback(() => {
+  // Session completion handler - guarded against multiple calls
+  const handleCompleteGame = useCallback((userRequested: boolean = false) => {
+    if (isCompletedRef.current) return;
+    isCompletedRef.current = true;
+    setIsCompleted(true);
+
     const elapsed = timer.getElapsedMs();
     const totalFound = foundWords.size;
-    const accuracy = Math.min(100, Math.round((totalFound / Math.max(1, targetWords)) * 100));
+    const isTargetMet = totalFound >= targetWords;
+
+    // Accuracy Calculation:
+    // If target met: 100% accuracy (triggers level-up in progression.ts)
+    // If target NOT met: capped at <= 65% (below 70% threshold -> strictly blocks automatic level up!)
+    let accuracy = 0;
+    if (isTargetMet) {
+      accuracy = 100;
+    } else {
+      accuracy = Math.min(65, Math.round((totalFound / Math.max(1, targetWords)) * 60));
+    }
 
     const finalScore = calculateGameScore('boggle' as any, level, {
       accuracy,
@@ -79,19 +97,20 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
       timeMs: elapsed,
       score: finalScore,
       mistakes,
-      mode: `Found ${totalFound}/${targetWords} Words (${score} pts)`
+      mode: isTargetMet
+        ? `Target Reached! Found ${totalFound}/${targetWords} Words (${score} pts)`
+        : `Time Up: Found ${totalFound}/${targetWords} Words (Target: ${targetWords})`
     });
   }, [foundWords, targetWords, score, mistakes, timer, level, onComplete]);
 
-  // Countdown Timer based on 10s per target word
+  // Countdown Timer based on 10s per target word (stops immediately upon completion)
   useEffect(() => {
-    if (!isReady || isPaused) return;
+    if (!isReady || isPaused || isCompleted) return;
 
     const interval = window.setInterval(() => {
       setTimeRemainingSec(prev => {
         if (prev <= 1) {
           clearInterval(interval);
-          handleTimeUp();
           return 0;
         }
         return prev - 1;
@@ -99,7 +118,14 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [isReady, isPaused, handleTimeUp]);
+  }, [isReady, isPaused, isCompleted]);
+
+  // Handle timeout when countdown reaches zero safely outside state updater
+  useEffect(() => {
+    if (timeRemainingSec === 0 && !isCompletedRef.current && isReady && !isPaused && !isCompleted) {
+      handleCompleteGame(false);
+    }
+  }, [timeRemainingSec, isReady, isPaused, isCompleted, handleCompleteGame]);
 
   // Check if cell is an adjacent neighbor of the last cell in path
   const isAdjacent = (r1: number, c1: number, r2: number, c2: number) => {
@@ -108,7 +134,7 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
 
   // Cell Interaction Handlers
   const handleCellClick = (r: number, c: number) => {
-    if (!isReady || isPaused) return;
+    if (!isReady || isPaused || isCompleted) return;
 
     soundManager.playTap();
 
@@ -144,6 +170,7 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
 
   // Submit and validate the formed word
   const handleSubmitWord = useCallback(() => {
+    if (isCompleted) return;
     if (currentWord.length < board.minWordLength) {
       setFeedbackMsg({ text: `Words must be at least ${board.minWordLength} letters!`, isGood: false });
       setTimeout(() => setFeedbackMsg(null), 1200);
@@ -184,7 +211,7 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
   // Keyboard shortcut listener
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!isReady || isPaused) return;
+      if (!isReady || isPaused || isCompleted) return;
 
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -261,11 +288,22 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
           )}
         </div>
 
-        {/* Action Controls: Submit & Clear */}
+        {/* Action Controls: Finish Level, Clear & Submit */}
         <div className="flex items-center gap-1.5">
+          {isGoalReached && !isCompleted && (
+            <button
+              onClick={() => handleCompleteGame(true)}
+              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-sm shadow-emerald-500/30 active:scale-95 transition-all flex items-center gap-1 animate-pulse"
+              title="Target reached! Finish level and view results"
+            >
+              <Trophy className="w-3.5 h-3.5" />
+              <span>Finish Level</span>
+            </button>
+          )}
+
           <button
             onClick={() => setCurrentPath([])}
-            disabled={currentPath.length === 0}
+            disabled={currentPath.length === 0 || isCompleted}
             className="p-2 rounded-xl text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-40 transition-colors"
             title="Clear Path (Esc)"
           >
@@ -274,7 +312,7 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
 
           <button
             onClick={handleSubmitWord}
-            disabled={currentWord.length < board.minWordLength}
+            disabled={currentWord.length < board.minWordLength || isCompleted}
             className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:opacity-40 text-white font-bold text-xs shadow-sm active:scale-95 transition-all flex items-center gap-1"
           >
             <Check className="w-3.5 h-3.5" />
@@ -313,7 +351,7 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
                 <button
                   key={`${r}-${c}`}
                   onClick={() => handleCellClick(r, c)}
-                  disabled={!isReady || isPaused}
+                  disabled={!isReady || isPaused || isCompleted}
                   className={`relative ${tileClass} rounded-xl font-mono font-black flex items-center justify-center shadow-sm transition-all transform active:scale-95 ${
                     isLast
                       ? 'bg-rose-600 text-white shadow-rose-500/40 ring-4 ring-rose-400/50 scale-105 z-10'

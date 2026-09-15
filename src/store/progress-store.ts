@@ -28,7 +28,8 @@ export interface ProgressState {
     timeMs: number,
     score: number,
     mistakes: number,
-    mode?: string
+    mode?: string,
+    playedLevel?: number
   ) => { result: GameResult; leveledUp: boolean; levelDelta: number };
 
   getRecentGames: (limit?: number) => GameProgress[];
@@ -60,10 +61,11 @@ export const useProgressStore = create<ProgressState>((set, get) => {
     games: initialData.games,
     attempts: initialAttempts,
 
-    recordGameResult: (gameId, accuracy, timeMs, score, mistakes, mode) => {
+    recordGameResult: (gameId, accuracy, timeMs, score, mistakes, mode, playedLevel) => {
       const state = get();
       const currentProgress = state.games[gameId];
       const previousLevel = currentProgress.level;
+      const levelToEvaluate = playedLevel ?? previousLevel;
       const previousMastery = currentProgress.mastery ?? 25;
       const previousAvgTime = currentProgress.averageTimeMs;
       const attemptsAtLevel = currentProgress.attemptsAtCurrentLevel ?? 0;
@@ -72,7 +74,7 @@ export const useProgressStore = create<ProgressState>((set, get) => {
       // Layer 1 & 2: Evaluate Performance Components, Mastery, and Level Gating
       const progression = calculateNextLevel(
         gameId,
-        previousLevel,
+        levelToEvaluate,
         previousMastery,
         attemptsAtLevel,
         {
@@ -80,15 +82,30 @@ export const useProgressStore = create<ProgressState>((set, get) => {
           timeMs,
           mistakes,
           totalAttempts: 1,
-          difficultyScore: previousLevel * 5,
-          level: previousLevel
+          difficultyScore: levelToEvaluate * 5,
+          level: levelToEvaluate
         },
         recentPerformances
       );
 
-      const newLevel = progression.newLevel;
+      // Only advance highest level if player completed their current highest level or above
+      let newLevel = previousLevel;
+      let leveledUp = false;
+      let levelDelta = 0;
+
+      if (progression.leveledUp) {
+        if (levelToEvaluate >= previousLevel) {
+          newLevel = previousLevel + 1;
+          leveledUp = true;
+          levelDelta = 1;
+        } else {
+          // Replayed an older level successfully; highest level remains
+          newLevel = previousLevel;
+          leveledUp = false;
+          levelDelta = 0;
+        }
+      }
       const newMastery = progression.mastery;
-      const leveledUp = progression.leveledUp;
       const performanceScore = progression.components.performanceScore;
 
       // Baseline Tracking (Layer 3)
@@ -98,7 +115,7 @@ export const useProgressStore = create<ProgressState>((set, get) => {
         : 0;
 
       // Speed * Accuracy Composite Index
-      const targetTime = getTargetTimeMs(gameId, previousLevel);
+      const targetTime = getTargetTimeMs(gameId, levelToEvaluate);
       const speedRatio = targetTime / Math.max(timeMs, 1000);
       const speedAccuracyScore = Math.round(accuracy * Math.min(1.5, speedRatio));
 
@@ -138,8 +155,8 @@ export const useProgressStore = create<ProgressState>((set, get) => {
           timeMs,
           mistakes,
           totalAttempts: 1,
-          difficultyScore: previousLevel * 5,
-          level: previousLevel
+          difficultyScore: levelToEvaluate * 5,
+          level: levelToEvaluate
         },
         previousAvgTime,
         baselineTime
@@ -171,7 +188,7 @@ export const useProgressStore = create<ProgressState>((set, get) => {
       const newAttempt: GameAttempt = {
         id: `att-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
         gameId,
-        level: previousLevel,
+        level: levelToEvaluate,
         score,
         timeMs,
         accuracy,
@@ -214,8 +231,8 @@ export const useProgressStore = create<ProgressState>((set, get) => {
 
       const result: GameResult = {
         gameId,
-        level: newLevel,
-        previousLevel,
+        level: levelToEvaluate,
+        previousLevel: levelToEvaluate,
         newLevel,
         score,
         accuracy,
