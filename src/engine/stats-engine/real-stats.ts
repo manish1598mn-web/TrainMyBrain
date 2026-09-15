@@ -64,7 +64,7 @@ export function computeAuthenticUserStats(
   if (totalBaseline > 0 && totalCurrent > 0) {
     const diff = totalBaseline - totalCurrent;
     const pct = Math.round((diff / totalBaseline) * 100);
-    speedImprovementDisplay = pct >= 0 ? +% : ${pct}%;
+    speedImprovementDisplay = `${pct >= 0 ? '+' : ''}${pct}%`;
   } else if (totalGamesPlayed > 0) {
     speedImprovementDisplay = 'Calibrating (1/3)';
   }
@@ -121,7 +121,7 @@ export function computeAuthenticUserStats(
   ] : [
     {
       title: 'FOCUS RETENTION',
-      value: focusScore > 0 ? ${focusScore}% : 'UNPLAYED',
+      value: focusScore > 0 ? `${focusScore}%` : 'UNPLAYED',
       color: focusScore > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-slate-500',
       pulseColor: 'bg-amber-500/80'
     },
@@ -133,19 +133,19 @@ export function computeAuthenticUserStats(
     },
     {
       title: 'ANALYTICAL REASONING',
-      value: reasoningScore > 0 ? ${reasoningScore}% : 'UNPLAYED',
+      value: reasoningScore > 0 ? `${reasoningScore}%` : 'UNPLAYED',
       color: reasoningScore > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-slate-500',
       pulseColor: 'bg-emerald-500/80'
     },
     {
       title: 'MENTAL CALCULATION',
-      value: calculationScore > 0 ? ${calculationScore}% : 'UNPLAYED',
+      value: calculationScore > 0 ? `${calculationScore}%` : 'UNPLAYED',
       color: calculationScore > 0 ? 'text-purple-600 dark:text-purple-400' : 'text-slate-500',
       pulseColor: 'bg-purple-500/80'
     },
     {
       title: 'ACCURACY INDEX',
-      value: ${overallAccuracy}%,
+      value: `${overallAccuracy}%`,
       color: 'text-teal-600 dark:text-teal-400',
       pulseColor: 'bg-teal-500/80'
     }
@@ -155,7 +155,7 @@ export function computeAuthenticUserStats(
     totalGamesPlayed,
     hasPlayedAnyGame,
     overallAccuracy,
-    accuracyDisplay: hasPlayedAnyGame ? ${overallAccuracy}% : 'Awaiting Data',
+    accuracyDisplay: hasPlayedAnyGame ? `${overallAccuracy}%` : 'Awaiting Data',
     speedImprovementDisplay,
     focusScore,
     reasoningScore,
