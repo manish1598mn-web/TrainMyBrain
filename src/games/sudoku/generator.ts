@@ -72,42 +72,40 @@ export function getSudokuGridConfig(level: number): {
   boxCols: number;
   label: string;
 } {
-  if (level <= 10) {
-    if (level <= 7) return { gridSize: 4, boxRows: 2, boxCols: 2, label: '4x4' };
-    return { gridSize: 6, boxRows: 2, boxCols: 3, label: '6x6' };
+  // 50% Difficulty Scaling: Keep gentle 4x4 and 6x6 grids longer
+  const effectiveLevel = Math.max(1, Math.ceil(level * 0.5));
+  if (effectiveLevel <= 10) {
+    return { gridSize: 4, boxRows: 2, boxCols: 2, label: '4x4' };
   }
-  if (level <= 25) {
+  if (effectiveLevel <= 25) {
     return { gridSize: 6, boxRows: 2, boxCols: 3, label: '6x6' };
   }
   return { gridSize: 9, boxRows: 3, boxCols: 3, label: '9x9' };
 }
 
 /**
- * Calculates empty cells count based on level
+ * Calculates empty cells count based on level (50% easier: fewer empty cells, more givens)
  */
 export function getSudokuEmptyCellsCount(level: number): number {
-  if (level === 1) return 4; // L1: exactly 4 to 6 empty cells
-  if (level <= 10) {
-    // 4 to 8 empty cells
-    return Math.round(4 + ((level - 1) / 9) * (8 - 4));
+  const effectiveLevel = Math.max(1, Math.ceil(level * 0.5));
+  if (effectiveLevel === 1) return 3; // L1: exactly 3 to 4 empty cells (super accessible)
+  if (effectiveLevel <= 10) {
+    // 3 to 6 empty cells on 4x4
+    return Math.round(3 + ((effectiveLevel - 1) / 9) * (6 - 3));
   }
-  if (level <= 25) {
-    // 12 to 20 empty cells on 6x6
-    return Math.round(12 + ((level - 11) / 14) * (20 - 12));
+  if (effectiveLevel <= 25) {
+    // 8 to 14 empty cells on 6x6
+    return Math.round(8 + ((effectiveLevel - 11) / 14) * (14 - 8));
   }
-  if (level <= 50) {
-    // 22 to 35 empty cells on 9x9
-    return Math.round(22 + ((level - 26) / 24) * (35 - 22));
+  if (effectiveLevel <= 50) {
+    // 16 to 26 empty cells on 9x9
+    return Math.round(16 + ((effectiveLevel - 26) / 24) * (26 - 16));
   }
-  if (level <= 75) {
-    // 35 to 45 empty cells on 9x9
-    return Math.round(35 + ((level - 51) / 24) * (45 - 35));
+  if (effectiveLevel <= 75) {
+    // 24 to 34 empty cells on 9x9
+    return Math.round(24 + ((effectiveLevel - 51) / 24) * (34 - 24));
   }
-  if (level <= 99) {
-    // 45 to 55 empty cells on 9x9
-    return Math.round(45 + ((level - 76) / 23) * (55 - 45));
-  }
-  return 55; // 99+ max empty cells
+  return 38; // Max empty cells capped comfortably
 }
 
 /**
@@ -263,12 +261,15 @@ export function generateValidSolution(
 /**
  * Generates a full calibrated Sudoku puzzle adhering strictly to the level specifications
  */
-export function generateSudokuPuzzle(level: number = 1, customSeed?: string | number): SudokuPuzzle {
+export function generateSudokuPuzzle(level: number = 1, customSeed?: string | number, forceGridSize?: 4 | 6 | 9): SudokuPuzzle {
   const safeLevel = Math.max(1, Math.min(120, level));
   const seed = customSeed !== undefined ? `${customSeed}` : `${Date.now()}-${safeLevel}-${Math.random()}`;
   const rng: SeededRandom = createSeededRandom(seed);
 
-  const { gridSize, boxRows, boxCols } = getSudokuGridConfig(safeLevel);
+  const cfg = getSudokuGridConfig(safeLevel);
+  const gridSize = forceGridSize || cfg.gridSize;
+  const boxRows = gridSize === 4 ? 2 : gridSize === 6 ? 2 : 3;
+  const boxCols = gridSize === 4 ? 2 : gridSize === 6 ? 3 : 3;
   const solution = generateValidSolution(gridSize, boxRows, boxCols, rng);
   const targetEmpty = getSudokuEmptyCellsCount(safeLevel);
   const timeAllowedSec = getSudokuTimeAllowedSec(safeLevel);
@@ -334,7 +335,8 @@ export function generateSudokuPuzzle(level: number = 1, customSeed?: string | nu
  * Backward-compatible full Sudoku generator
  */
 export function generateFullSudoku(level: number, customSeed?: string | number) {
-  const puzzle = generateSudokuPuzzle(level, customSeed);
+  // Full classic Sudoku is standard 9x9 board
+  const puzzle = generateSudokuPuzzle(level, customSeed, 9);
   return {
     ...puzzle,
     cluesCount: puzzle.givensCount,

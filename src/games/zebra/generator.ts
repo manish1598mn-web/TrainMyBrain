@@ -76,12 +76,15 @@ export interface PuzzleLevelSpec {
  * Calculates level specifications adhering strictly to the classification table
  */
 export function getPuzzleLevelSpec(level: number): PuzzleLevelSpec {
-  if (level <= 10) {
+  // 50% Difficulty Scaling: Effective level is halved so difficulty curve is 50% gentler
+  const effectiveLevel = Math.max(1, Math.ceil(level * 0.5));
+
+  if (effectiveLevel <= 10) {
     return {
-      entitiesRange: [4, 6],
+      entitiesRange: [3, 4],
       variablesRange: [1, 1],
-      constraintsRange: [3, 6],
-      complexityTier: 'Basic Single-Variable',
+      constraintsRange: [2, 3],
+      complexityTier: 'Basic Single-Variable (Easy)',
       allowedCategories: [
         'linear_arrangement',
         'comparison_ranking',
@@ -90,15 +93,15 @@ export function getPuzzleLevelSpec(level: number): PuzzleLevelSpec {
         'mechanical_spatial',
         'math_cryptarithmetic'
       ],
-      timeAllowedSec: Math.round(60 + (level - 1) * 3.33) // 60s to 90s
+      timeAllowedSec: Math.round(90 + (effectiveLevel - 1) * 3.33) // 90s to 120s (+50% buffer)
     };
   }
 
-  if (level <= 25) {
+  if (effectiveLevel <= 25) {
     return {
-      entitiesRange: [5, 7],
+      entitiesRange: [4, 5],
       variablesRange: [1, 2],
-      constraintsRange: [5, 9],
+      constraintsRange: [3, 5],
       complexityTier: 'Basic Multi-Constraint',
       allowedCategories: [
         'circular_arrangement',
@@ -110,15 +113,15 @@ export function getPuzzleLevelSpec(level: number): PuzzleLevelSpec {
         'mechanical_spatial',
         'word_logic_syllogisms'
       ],
-      timeAllowedSec: Math.round(90 + ((level - 11) / 14) * 60) // 90s to 150s
+      timeAllowedSec: Math.round(120 + ((effectiveLevel - 11) / 14) * 60) // 120s to 180s
     };
   }
 
-  if (level <= 50) {
+  if (effectiveLevel <= 50) {
     return {
-      entitiesRange: [6, 8],
-      variablesRange: [2, 3],
-      constraintsRange: [7, 12],
+      entitiesRange: [5, 6],
+      variablesRange: [2, 2],
+      constraintsRange: [4, 7],
       complexityTier: 'Multi-Variable Puzzles',
       allowedCategories: [
         'box_stacking',
@@ -130,15 +133,15 @@ export function getPuzzleLevelSpec(level: number): PuzzleLevelSpec {
         'visual_diagrammatic',
         'math_cryptarithmetic'
       ],
-      timeAllowedSec: Math.round(150 + ((level - 26) / 24) * 90) // 150s to 240s
+      timeAllowedSec: Math.round(180 + ((effectiveLevel - 26) / 24) * 90) // 180s to 270s
     };
   }
 
-  if (level <= 99) {
+  if (effectiveLevel <= 99) {
     return {
-      entitiesRange: [8, 12],
-      variablesRange: [3, 5],
-      constraintsRange: [10, 20],
+      entitiesRange: [6, 8],
+      variablesRange: [2, 3],
+      constraintsRange: [6, 10],
       complexityTier: 'Complex Multi-Layer',
       allowedCategories: [
         'square_rectangular',
@@ -149,16 +152,16 @@ export function getPuzzleLevelSpec(level: number): PuzzleLevelSpec {
         'circular_arrangement',
         'visual_diagrammatic'
       ],
-      timeAllowedSec: Math.round(240 + ((level - 51) / 48) * 120) // 240s to 360s
+      timeAllowedSec: Math.round(240 + ((effectiveLevel - 51) / 48) * 120) // 240s to 360s
     };
   }
 
   // 99+ Grandmaster
   return {
-    entitiesRange: [10, 12],
-    variablesRange: [4, 6],
-    constraintsRange: [15, 25],
-    complexityTier: 'Maximum Complexity Hybrid',
+    entitiesRange: [8, 10],
+    variablesRange: [3, 4],
+    constraintsRange: [8, 14],
+    complexityTier: 'Mastery Hybrid',
     allowedCategories: [
       'hybrid_puzzle',
       'complex_floor_box',
@@ -174,13 +177,16 @@ export function getPuzzleLevelSpec(level: number): PuzzleLevelSpec {
 /**
  * Generates structured reasoning puzzles matching level parameters
  */
-export function generateReasoningPuzzles(level: number = 1, customSeed?: string | number): ReasoningPuzzle[] {
-  const safeLevel = Math.max(1, Math.min(120, level));
+export function generateReasoningPuzzles(level: number = 1, customSeed?: string | number, customCount?: number): ReasoningPuzzle[] {
+  // 50% Difficulty Scaling: Effective level is halved
+  const effectiveLevel = Math.max(1, Math.ceil(level * 0.5));
+  const safeLevel = Math.max(1, Math.min(120, effectiveLevel));
   const seed = customSeed !== undefined ? `${customSeed}` : `${Date.now()}-${safeLevel}-${Math.random()}`;
   const rng: SeededRandom = createSeededRandom(seed);
 
   const spec = getPuzzleLevelSpec(safeLevel);
-  const totalPuzzles = safeLevel <= 10 ? 4 : safeLevel <= 30 ? 5 : 6;
+  // Level 1-3 has 3 quick digestible puzzles; Level 4-10 has 4 puzzles (meeting test suite requirements)
+  const totalPuzzles = customCount !== undefined ? customCount : (safeLevel <= 3 ? 3 : safeLevel <= 10 ? 4 : 5);
   const puzzles: ReasoningPuzzle[] = [];
 
   for (let i = 0; i < totalPuzzles; i++) {
@@ -192,22 +198,28 @@ export function generateReasoningPuzzles(level: number = 1, customSeed?: string 
       // 1. LINEAR ARRANGEMENT (Levels 1-10+)
       // -------------------------------------------------------------
       case 'linear_arrangement': {
-        const entities = ['Aarav', 'Bhavna', 'Chetan', 'Deepa', 'Eshaan', 'Farhan'].slice(0, safeLevel <= 5 ? 4 : 6);
-        const permuted = rng.shuffle([...entities]);
-        const targetPerson = permuted[0];
-        const rightOfTarget = permuted[1];
-        const extremeLeft = permuted[0];
-        const extremeRight = permuted[permuted.length - 1];
+        const count = safeLevel <= 5 ? 3 : safeLevel <= 15 ? 4 : 5;
+        const entities = ['Aarav', 'Bhavna', 'Chetan', 'Deepa', 'Eshaan'].slice(0, count);
+        const leftPerson = entities[0];
+        const middlePerson = entities[1];
+        const rightPerson = entities[entities.length - 1];
 
-        const premises = [
+        const premises = count === 3 ? [
+          `• 3 persons (${entities.join(', ')}) sit in a straight row facing North.`,
+          `• ${leftPerson} sits on the extreme left.`,
+          `• ${rightPerson} sits on the extreme right.`,
+          `• ${middlePerson} sits in the middle between ${leftPerson} and ${rightPerson}.`
+        ] : [
           `• ${entities.length} persons (${entities.join(', ')}) sit in a single straight row facing North.`,
-          `• ${extremeLeft} sits at the extreme left end of the row.`,
-          `• ${rightOfTarget} sits immediately to the right of ${targetPerson}.`,
-          `• ${extremeRight} sits at the extreme right end of the row.`
+          `• ${leftPerson} sits at the extreme left end of the row.`,
+          `• ${rightPerson} sits at the extreme right end of the row.`,
+          `• ${middlePerson} sits immediately next to ${leftPerson}.`
         ];
 
-        const question = `Who is sitting at the extreme left end of the row?`;
-        const correctAnswer = extremeLeft;
+        const question = count === 3 
+          ? `Who is sitting in the middle position?`
+          : `Who is sitting at the extreme left end of the row?`;
+        const correctAnswer = count === 3 ? middlePerson : leftPerson;
         const distractorPersons = entities.filter(e => e !== correctAnswer);
         const options: PuzzleOption[] = rng.shuffle([
           { id: 'opt-1', label: correctAnswer, isCorrect: true },
@@ -239,23 +251,28 @@ export function generateReasoningPuzzles(level: number = 1, customSeed?: string 
       // 2. COMPARISON & RANKING (Levels 1-10+)
       // -------------------------------------------------------------
       case 'comparison_ranking': {
-        const items = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta'].slice(0, safeLevel <= 5 ? 4 : 5);
-        const scores = items.map((_, idx) => (idx + 1) * 10);
+        const count = safeLevel <= 5 ? 3 : safeLevel <= 15 ? 4 : 5;
+        const items = ['Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon'].slice(0, count);
         const ranked = rng.shuffle([...items]);
 
-        const tallest = ranked[0];
+        const highest = ranked[0];
         const second = ranked[1];
-        const shortest = ranked[ranked.length - 1];
+        const lowest = ranked[ranked.length - 1];
 
-        const premises = [
+        const premises = count === 3 ? [
+          `• Among 3 candidates (${items.join(', ')}):`,
+          `• ${highest} scored higher than ${second}.`,
+          `• ${second} scored higher than ${lowest}.`,
+          `• ${lowest} obtained the lowest score.`
+        ] : [
           `• Among ${items.length} candidates (${items.join(', ')}):`,
-          `• ${tallest} scored strictly higher than ${second}.`,
-          `• ${second} scored higher than all remaining candidates.`,
-          `• ${shortest} obtained the lowest score in the test.`
+          `• ${highest} scored higher than ${second}.`,
+          `• ${second} scored higher than all other candidates.`,
+          `• ${lowest} obtained the lowest score.`
         ];
 
-        const question = `Which candidate achieved the HIGHEST overall score?`;
-        const correctAnswer = tallest;
+        const question = `Which candidate achieved the HIGHEST score?`;
+        const correctAnswer = highest;
         const distractors = items.filter(it => it !== correctAnswer);
         const options: PuzzleOption[] = rng.shuffle([
           { id: 'opt-1', label: correctAnswer, isCorrect: true },
@@ -276,7 +293,7 @@ export function generateReasoningPuzzles(level: number = 1, customSeed?: string 
           question,
           options,
           correctAnswer,
-          explanation: `By transitive inequality analysis (${tallest} > ${second} > others), ${correctAnswer} is uniquely ranked highest.`,
+          explanation: `By transitive inequality analysis (${highest} > ${second} > others), ${correctAnswer} is uniquely ranked highest.`,
           difficultyScore: 12 + safeLevel * 1.5,
           puzzleFingerprint: fp
         };
@@ -287,7 +304,8 @@ export function generateReasoningPuzzles(level: number = 1, customSeed?: string 
       // 3. CIRCULAR ARRANGEMENT (Levels 11-25+)
       // -------------------------------------------------------------
       case 'circular_arrangement': {
-        const persons = ['P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'].slice(0, safeLevel <= 17 ? 6 : 8);
+        const count = safeLevel <= 15 ? 4 : 6;
+        const persons = ['P', 'Q', 'R', 'S', 'T', 'U'].slice(0, count);
         const target = persons[0];
         const opposite = persons[Math.floor(persons.length / 2)];
         const leftNeighbor = persons[1];
@@ -295,7 +313,8 @@ export function generateReasoningPuzzles(level: number = 1, customSeed?: string 
         const premises = [
           `• ${persons.length} persons (${persons.join(', ')}) sit in a circle facing the center.`,
           `• ${target} sits directly opposite ${opposite}.`,
-          `• ${leftNeighbor} sits immediately to the left of ${target}.`
+          `• ${leftNeighbor} sits immediately to the left of ${target}.`,
+          `• All seats are equally spaced around the circular table.`
         ];
 
         const question = `Who is sitting directly opposite ${target}?`;
@@ -331,16 +350,16 @@ export function generateReasoningPuzzles(level: number = 1, customSeed?: string 
       // 4. FLOOR-BASED PUZZLES (Levels 11-25+)
       // -------------------------------------------------------------
       case 'floor_based': {
-        const floorCount = safeLevel <= 17 ? 6 : 8;
-        const people = ['Anil', 'Bina', 'Charu', 'Divya', 'Esha', 'Firoz', 'Gita', 'Hari'].slice(0, floorCount);
+        const floorCount = safeLevel <= 15 ? 3 : 4;
+        const people = ['Anil', 'Bina', 'Charu', 'Divya'].slice(0, floorCount);
         const topFloorPerson = people[floorCount - 1];
         const groundFloorPerson = people[0];
 
         const premises = [
           `• In a building with Floors 1 to ${floorCount} (1 is ground, ${floorCount} is top):`,
-          `• ${topFloorPerson} lives on Floor ${floorCount}.`,
+          `• ${topFloorPerson} lives on Floor ${floorCount} (top floor).`,
           `• ${groundFloorPerson} lives on the ground floor (Floor 1).`,
-          `• ${people[1]} lives on an even-numbered floor immediately above ${groundFloorPerson}.`
+          `• Each floor has exactly one resident living on it.`
         ];
 
         const question = `Which person lives on Floor ${floorCount} (the top floor)?`;
@@ -376,16 +395,16 @@ export function generateReasoningPuzzles(level: number = 1, customSeed?: string 
       // 5. BOX STACKING & MATRIX (Levels 26-50+)
       // -------------------------------------------------------------
       case 'box_stacking': {
-        const boxCount = 7;
-        const boxes = ['Box P', 'Box Q', 'Box R', 'Box S', 'Box T', 'Box U', 'Box V'];
+        const boxCount = 4;
+        const boxes = ['Box P', 'Box Q', 'Box R', 'Box S'];
         const topBox = boxes[0];
         const bottomBox = boxes[boxes.length - 1];
 
         const premises = [
-          `• 7 boxes (${boxes.join(', ')}) are stacked one above another.`,
-          `• ${topBox} is kept at the very top of the stack.`,
-          `• Exactly two boxes are placed between ${topBox} and ${boxes[3]}.`,
-          `• ${bottomBox} is placed at the bottom-most position.`
+          `• 4 boxes (${boxes.join(', ')}) are stacked one above another.`,
+          `• ${topBox} is placed at the very top of the stack.`,
+          `• ${bottomBox} is placed at the bottom position.`,
+          `• Each position holds exactly one box in vertical order.`
         ];
 
         const question = `Which box is placed at the very TOP of the stack?`;
@@ -469,15 +488,12 @@ export function generateReasoningPuzzles(level: number = 1, customSeed?: string 
       case 'square_rectangular':
       case 'hybrid_puzzle':
       default: {
-        const persons = ['P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'];
-        const corners = ['P', 'Q', 'R', 'S'];
-        const edges = ['T', 'U', 'V', 'W'];
+        const persons = ['P', 'Q', 'R', 'S'];
 
         const premises = [
-          `• 8 persons sit around a square table: 4 at corners facing center, 4 at middle edges facing outward.`,
-          `• P sits at one of the corners facing inward.`,
-          `• T sits on a middle edge facing outward immediately to the right of P.`,
-          `• R sits at a corner directly opposite P.`
+          `• 4 persons (P, Q, R, S) sit around a square table, one on each side facing center.`,
+          `• P sits directly opposite R.`,
+          `• Q sits to the immediate right of P.`
         ];
 
         const question = `Who sits directly opposite P at the opposite corner?`;

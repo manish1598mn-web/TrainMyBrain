@@ -55,6 +55,11 @@ export interface ProgressState {
 
 export const useProgressStore = create<ProgressState>((set, get) => {
   const initialData = progressStorage.getProgress();
+  // Calibrate puzzle level down by 50% if currently elevated
+  if (initialData.games?.zebra?.level && initialData.games.zebra.level > 2) {
+    initialData.games.zebra.level = Math.max(1, Math.round(initialData.games.zebra.level * 0.5));
+    progressStorage.saveProgress(initialData);
+  }
   const initialAttempts = historyStorage.getAttempts();
 
   return {
