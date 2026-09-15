@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, ChevronRight } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 
 export const LevelProgressionPath: React.FC = () => {
   const steps = [
@@ -20,10 +20,10 @@ export const LevelProgressionPath: React.FC = () => {
         <div className="flex items-center justify-between mb-3 px-1">
           <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">
             <Sparkles className="w-3 h-3 text-teal-500" />
-            <span>TrainMyBrain Progressive Difficulty Architecture</span>
+            <span>Level Progression Path</span>
           </div>
           <span className="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-bold hidden sm:inline-block">
-            1.5× Dynamic Scaling System
+            Adaptive Scaling (Lvl 1 ? 99+)
           </span>
         </div>
 

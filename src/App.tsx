@@ -111,6 +111,12 @@ export function App() {
         setShortcutsModalOpen(prev => !prev);
       }
 
+      // Developer diagnostics key (Ctrl+Shift+D)
+      if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'd') {
+        e.preventDefault();
+        setDiagnosticsModalOpen(prev => !prev);
+      }
+
       // Quick tab navigation when on dashboard screens
       if (!activeGameId && !shortcutsModalOpen) {
         if (e.key === '1') setCurrentTab('home');
@@ -477,10 +483,10 @@ export function App() {
         <footer className="mt-auto border-t border-slate-200/80 dark:border-slate-800/80 bg-white/50 dark:bg-[#0B0F17]/50 py-6 text-center text-xs text-slate-400 select-none">
           <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="font-medium">
-              Train<span className="text-teal-600 dark:text-teal-400 font-bold">MyBrain</span> • Train Your Mind. Solve Faster.
+              Train<span className="text-teal-600 dark:text-teal-400 font-bold">MyBrain</span> â€¢ Train Your Mind. Solve Faster.
             </p>
             <p className="text-[11px] text-slate-400">
-              Anonymous client-side local training • Shareable challenge links
+              Anonymous client-side local training â€¢ Shareable challenge links
             </p>
           </div>
         </footer>
@@ -561,14 +567,6 @@ export function App() {
       <SettingsModal
         isOpen={settingsModalOpen}
         onClose={() => setSettingsModalOpen(false)}
-        onOpenDiagnostics={() => {
-          setSettingsModalOpen(false);
-          setDiagnosticsModalOpen(true);
-        }}
-        onOpenAIAdmin={() => {
-          setSettingsModalOpen(false);
-          setAiAdminModalOpen(true);
-        }}
         onOpenBackupSync={() => {
           setSettingsModalOpen(false);
           setBackupSyncModalOpen(true);

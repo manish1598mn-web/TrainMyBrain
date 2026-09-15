@@ -37,7 +37,7 @@ export const Hero: React.FC<HeroProps> = ({
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 mb-4 shadow-xs backdrop-blur-xs">
           <span className="flex h-2 w-2 rounded-full bg-teal-500 animate-pulse" />
           <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 font-mono">
-            Cognitive Speed & Mental Fitness • For All Competitive Exams & Brain Training
+            Cognitive Speed & Mental Agility
           </span>
         </div>
 
@@ -48,8 +48,8 @@ export const Hero: React.FC<HeroProps> = ({
           </span>
         </h1>
 
-        <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-          Explore how each of our 5 brain training games targets a specific cognitive faculty to dramatically boost your speed, mental agility, and problem-solving focus.
+        <p className="mt-3 text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-xl mx-auto leading-relaxed font-medium">
+          Train core cognitive speed, working memory, and logical reflex across 5 adaptive disciplines.
         </p>
 
         <div className="mt-5 flex flex-wrap items-center justify-center gap-3">

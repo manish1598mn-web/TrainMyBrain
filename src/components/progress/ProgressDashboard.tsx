@@ -54,7 +54,7 @@ export const ProgressDashboard: React.FC<ProgressDashboardProps> = ({ onPlayGame
               Your Mind Performance
             </h1>
             <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 max-w-md font-normal leading-relaxed">
-              4-Layer Performance analytics tracking accuracy, speed vs baseline, and level mastery.
+              Track your accuracy, speed, and level mastery across all 5 faculties.
             </p>
           </div>
 

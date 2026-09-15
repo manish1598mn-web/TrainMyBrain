@@ -2,21 +2,17 @@ import React, { useState } from 'react';
 import { useSettingsStore } from '../../store/settings-store';
 import { useProgressStore } from '../../store/progress-store';
 import { soundManager } from '../../lib/sound';
-import { X, Volume2, VolumeX, Moon, Sun, ShieldAlert, Check, RefreshCw, Smartphone } from 'lucide-react';
+import { X, Volume2, VolumeX, Moon, Sun, ShieldAlert, Check, Smartphone } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onOpenDiagnostics?: () => void;
-  onOpenAIAdmin?: () => void;
   onOpenBackupSync?: () => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onClose,
-  onOpenDiagnostics,
-  onOpenAIAdmin,
   onOpenBackupSync
 }) => {
   const { 
@@ -47,6 +43,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
     }, 1200);
   };
 
+  const soundPacks = [
+    { id: 'zen', name: 'Zen Chimes', desc: 'Harmonic bells with soft decay', badge: '🔔' },
+    { id: 'tech', name: 'Subtle Tech', desc: 'High-precision micro clicks', badge: '⚡' },
+    { id: 'retro', name: 'Retro Arcade', desc: '8-bit playful arpeggios', badge: '🎮' },
+    { id: 'mute', name: 'Mute Effects', desc: 'Silent focused training', badge: '🔇' }
+  ];
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-in fade-in select-none">
       <div className="relative w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 shadow-xl">
@@ -69,14 +72,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           Customize audio, appearance, and data preferences.
         </p>
 
-        {/* Settings Toggles List */}
-        <div className="space-y-2.5 mb-6">
-          
-          {/* Sound Master Toggle */}
+        <div className="space-y-3.5">
+          {/* Sound Toggle */}
           <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60">
             <div className="flex items-center gap-2.5 text-xs font-medium text-slate-800 dark:text-slate-200">
               {soundEnabled ? <Volume2 className="w-4 h-4 text-teal-600" /> : <VolumeX className="w-4 h-4 text-slate-400" />}
-              <span>Audio Sound Effects</span>
+              <span>Sound Effects</span>
             </div>
             <button
               onClick={() => {
@@ -91,32 +92,27 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </button>
           </div>
 
-          {/* Soundscape Packs Selector (Phase 2) */}
+          {/* Soundscape Pack Selector */}
           {soundEnabled && (
-            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/70 dark:border-slate-700/60 space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono font-bold uppercase text-slate-500 dark:text-slate-400">
-                  Soundscape Pack
+            <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 animate-in fade-in">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                  Soundscape Theme
                 </span>
-                <span className="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-semibold">
-                  Synthesized Web Audio
+                <span className="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-bold uppercase">
+                  Procedural Audio
                 </span>
               </div>
 
-              <div className="grid grid-cols-2 gap-1.5">
-                {[
-                  { id: 'zen', name: 'Zen Chimes', desc: 'Calm harmonic bells', badge: '🔔' },
-                  { id: 'tech', name: 'Subtle Tech', desc: 'Snappy micro-clicks', badge: '⚡' },
-                  { id: 'retro', name: 'Retro Arcade', desc: '8-bit square chimes', badge: '👾' },
-                  { id: 'mute', name: 'Mute Effects', desc: 'Silent execution', badge: '🔇' }
-                ].map(pack => {
+              <div className="grid grid-cols-2 gap-2">
+                {soundPacks.map((pack) => {
                   const isSelected = soundPack === pack.id;
                   return (
                     <div
                       key={pack.id}
                       onClick={() => {
-                        setSoundPack(pack.id as any);
                         soundManager.playTap();
+                        setSoundPack(pack.id as any);
                       }}
                       className={`p-2 rounded-lg border text-left cursor-pointer transition-all flex flex-col justify-between ${
                         isSelected
@@ -187,26 +183,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </button>
           </div>
 
-          {/* Engine Diagnostics & Verification */}
-          {onOpenDiagnostics && (
-            <button
-              onClick={() => {
-                soundManager.playTap();
-                onOpenDiagnostics();
-              }}
-              className="w-full flex items-center justify-between p-3 rounded-xl bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200/80 dark:border-teal-800/60 text-teal-700 dark:text-teal-300 hover:bg-teal-100/80 dark:hover:bg-teal-900/40 transition-colors"
-            >
-              <div className="flex items-center gap-2.5 text-xs font-semibold">
-                <Check className="w-4 h-4 text-teal-600" />
-                <span>Diagnostics & Verification Suite</span>
-              </div>
-              <span className="text-[10px] font-mono font-bold uppercase bg-teal-600/15 px-2 py-0.5 rounded-md">
-                Phase 6
-              </span>
-            </button>
-          )}
-
-          {/* Backup & Device Sync (No Accounts) */}
+          {/* Backup & Device Sync (Clean user data tool) */}
           {onOpenBackupSync && (
             <button
               onClick={() => {
@@ -217,29 +194,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             >
               <div className="flex items-center gap-2.5 text-xs font-semibold">
                 <Smartphone className="w-4 h-4 text-teal-600" />
-                <span>Backup & Device Sync (No Sign-Up)</span>
+                <span>Backup & Device Sync</span>
               </div>
               <span className="text-[10px] font-mono font-bold uppercase bg-teal-600/15 px-2 py-0.5 rounded-md">
-                Sync
-              </span>
-            </button>
-          )}
-
-          {/* AI Content Factory & Quality Dashboard */}
-          {onOpenAIAdmin && (
-            <button
-              onClick={() => {
-                soundManager.playTap();
-                onOpenAIAdmin();
-              }}
-              className="w-full flex items-center justify-between p-3 rounded-xl bg-sky-50/70 dark:bg-sky-950/30 border border-sky-200/80 dark:border-sky-800/60 text-sky-700 dark:text-sky-300 hover:bg-sky-100/80 dark:hover:bg-sky-900/40 transition-colors"
-            >
-              <div className="flex items-center gap-2.5 text-xs font-semibold">
-                <RefreshCw className="w-4 h-4 text-sky-600" />
-                <span>AI Content Factory & Quality Dashboard</span>
-              </div>
-              <span className="text-[10px] font-mono font-bold uppercase bg-sky-600/15 px-2 py-0.5 rounded-md">
-                Admin
+                Transfer
               </span>
             </button>
           )}
@@ -258,19 +216,19 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="flex items-start gap-2 mb-3">
                 <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                 <p className="text-xs text-rose-800 dark:text-rose-200 font-medium">
-                  Are you sure? This will permanently reset all 5 game levels, streaks, and history.
+                  Are you sure? This will permanently delete all training records and scores.
                 </p>
               </div>
               <div className="flex gap-2">
                 <button
                   onClick={handlePerformReset}
-                  className="flex-1 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition-colors"
+                  className="flex-1 py-1.5 rounded-lg bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs transition-all"
                 >
-                  Yes, Reset All
+                  Yes, Reset Everything
                 </button>
                 <button
                   onClick={() => setConfirmReset(false)}
-                  className="flex-1 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-semibold"
+                  className="px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium text-xs transition-all"
                 >
                   Cancel
                 </button>
@@ -278,14 +236,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           ) : (
             <button
-              onClick={() => {
-                soundManager.playTap();
-                setConfirmReset(true);
-              }}
-              className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-rose-50 hover:text-rose-600 dark:bg-slate-800 dark:hover:bg-rose-950/40 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-semibold text-xs transition-all flex items-center justify-center gap-1.5"
+              onClick={() => setConfirmReset(true)}
+              className="w-full text-center text-xs font-medium text-rose-500 hover:text-rose-600 dark:hover:text-rose-400 py-1 transition-colors"
             >
-              <RefreshCw className="w-3.5 h-3.5" />
-              <span>Reset All Progress</span>
+              Reset All Progress
             </button>
           )}
         </div>

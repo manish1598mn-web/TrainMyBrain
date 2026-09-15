@@ -322,13 +322,13 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-            Level 1 ? Level 99+ Adaptive Progression
+            Level 1 → Level 99+ Adaptive Progression
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Train with 5 Brain Games & Cognitive Faculties
           </h2>
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-normal">
-            Build the core cognitive reflex skills behind rapid Quant & Reasoning solving.
+            Sharpen working memory, calculation speed, and logical deduction.
           </p>
         </div>
       </div>
@@ -338,7 +338,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
         <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/5 border-2 border-amber-400/40 dark:border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm hover:border-amber-400 transition-all relative z-10">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xl shadow-md shrink-0">
-              ???
+              🏋️
             </div>
             <div>
               <div className="flex items-center gap-2">
@@ -379,9 +379,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
               ANATOMICAL BRAIN DIAGRAM & GAME MAPPING
             </h3>
           </div>
-          <span className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-[11px] font-mono text-slate-500 dark:text-slate-400">
-            Click any card or lobe to inspect & play
-          </span>
+          
         </div>
 
         {/* 3-Column Diagram Layout: Left 3 Cards | Center Brain Visual | Right 3 Cards */}
@@ -475,7 +473,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
               </div>
               <div>
                 <span className="text-[10px] uppercase font-bold text-slate-400 font-mono block">
-                  Active Faculty Breakdown • {activeRegion.anatomicalLobe}
+                  Faculty • {activeRegion.anatomicalLobe}
                 </span>
                 <h4 className="text-sm font-bold text-slate-900 dark:text-white">
                   {activeRegion.gameName} — {activeRegion.skillName}
@@ -501,7 +499,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
             {activeRegion.natureDetails}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500 font-mono">
-            <span>?? Primary Exam Transfer: <strong className="text-slate-800 dark:text-slate-200 font-medium">{activeRegion.examApplication}</strong></span>
+            <span>🎯 Primary Exam Transfer: <strong className="text-slate-800 dark:text-slate-200 font-medium">{activeRegion.examApplication}</strong></span>
           </div>
         </div>
 
