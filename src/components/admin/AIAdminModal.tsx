@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { X, Cpu, CheckCircle2, AlertTriangle, RefreshCw, Layers, Database, Sparkles, Activity, ShieldCheck, Key, Check, Globe } from 'lucide-react';
 import { GameId } from '../../engine/game-engine/types';
 import { getPoolStats, preGeneratePoolBatch } from '../../services/ai/question-factory';
@@ -87,11 +87,11 @@ export const AIAdminModal: React.FC<AIAdminModalProps> = ({ isOpen, onClose }) =
   };
 
   const gamesList: { id: GameId; label: string }[] = [
-    { id: 'wordspeed', label: '🔤 Word Speed' },
-    { id: 'anzan', label: '⚡ Pro Calculations' },
-    { id: 'boggle', label: '🎲 Boggle' },
-    { id: 'sudoku', label: '🧩 Sudoku Reflex' },
-    { id: 'zebra', label: '🕵️ Reasoning Puzzles' }
+    { id: 'wordspeed', label: '🔤Word Speed' },
+    { id: 'anzan', label: '⚡Pro Calculations' },
+    { id: 'boggle', label: '🎲Boggle' },
+    { id: 'sudoku', label: '🧩Sudoku Reflex' },
+    { id: 'zebra', label: '🕵️Reasoning Puzzles' }
   ];
 
   return (

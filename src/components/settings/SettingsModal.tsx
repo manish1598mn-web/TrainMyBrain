@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useSettingsStore } from '../../store/settings-store';
 import { useProgressStore } from '../../store/progress-store';
 import { soundManager } from '../../lib/sound';
-import { X, Volume2, VolumeX, Moon, Sun, ShieldAlert, Check, Smartphone } from 'lucide-react';
+import { X, Volume2, VolumeX, Moon, Sun, ShieldAlert, Check, Smartphone, Play } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -52,7 +52,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-in fade-in select-none">
-      <div className="relative w-full max-w-sm rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 shadow-xl">
+      <div className="glass-panel-elevated relative w-full max-w-sm rounded-3xl p-6 sm:p-7 shadow-2xl border border-slate-200/80 dark:border-slate-800">
         
         {/* Close Button */}
         <button
@@ -134,7 +134,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                           className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-teal-500 hover:text-white transition-colors"
                           title="Audition sound"
                         >
-                          ▶ Test
+                          <span className="flex items-center gap-1"><Play className="w-2.5 h-2.5 fill-current" /> Test</span>
                         </button>
                       </div>
                       <p className="text-[10px] text-slate-400 dark:text-slate-500 leading-tight">

@@ -63,7 +63,9 @@ export function calculateNextLevel(
   const accuracyBonusMultiplier = accuracy >= 95 ? 1.05 : accuracy >= 90 ? 1.0 : accuracy >= 80 ? 0.95 : 0.85;
   const weightedPerformance = performance * accuracyBonusMultiplier;
   
-  const rawMastery = (previousMastery * 0.70) + (weightedPerformance * 0.30);
+  const rawMastery = (previousMastery === 0 || previousMastery === undefined) 
+    ? weightedPerformance 
+    : (previousMastery * 0.70) + (weightedPerformance * 0.30);
   newMastery = Math.round(Math.min(100, Math.max(0, rawMastery)));
   masteryDelta = newMastery - previousMastery;
 

@@ -15,7 +15,7 @@ export const LevelProgressionPath: React.FC = () => {
     <div className="max-w-4xl mx-auto my-6 px-4 select-none">
       
       {/* Container Box */}
-      <div className="p-3 sm:p-4 rounded-2xl bg-white/70 dark:bg-slate-900/60 border border-slate-200/70 dark:border-slate-800/70 backdrop-blur-sm shadow-xs">
+      <div className="p-3.5 sm:p-4 rounded-2xl glass-panel border border-slate-200/80 dark:border-slate-800/80 shadow-xs">
         
         <div className="flex items-center justify-between mb-3 px-1">
           <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">
@@ -23,7 +23,7 @@ export const LevelProgressionPath: React.FC = () => {
             <span>Level Progression Path</span>
           </div>
           <span className="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-bold hidden sm:inline-block">
-            Adaptive Scaling (Lvl 1 ? 99+)
+            Adaptive Progression (Lvl 1 → 99+)
           </span>
         </div>
 

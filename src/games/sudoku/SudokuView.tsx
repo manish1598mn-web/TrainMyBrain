@@ -261,9 +261,9 @@ export const SudokuView: React.FC<SudokuViewProps> = ({
       {/* 3-Tier Progressive Hint Display */}
       {hintTier > 0 && (
         <div className="w-full mb-3 p-3 rounded-2xl bg-amber-50/90 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 animate-in zoom-in-95 leading-relaxed">
-          {hintTier === 1 && <div><strong>🔍 Hint 1 (Area Focus):</strong> {puzzle.progressiveHints[0]?.hint1}</div>}
-          {hintTier === 2 && <div><strong>⚡ Hint 2 (Constraint Reduction):</strong> {puzzle.progressiveHints[0]?.hint2}</div>}
-          {hintTier === 3 && <div><strong>💡 Hint 3 (Direct Solution):</strong> {puzzle.progressiveHints[0]?.hint3}</div>}
+          {hintTier === 1 && <div><strong>Hint 1 (Area Focus):</strong> {puzzle.progressiveHints[0]?.hint1}</div>}
+          {hintTier === 2 && <div><strong>Hint 2 (Constraint Reduction):</strong> {puzzle.progressiveHints[0]?.hint2}</div>}
+          {hintTier === 3 && <div><strong>Hint 3 (Direct Solution):</strong> {puzzle.progressiveHints[0]?.hint3}</div>}
         </div>
       )}
 

@@ -39,37 +39,136 @@
   }
 }
 
-/* Zen Glassmorphic Cards & Focus Frames */
+/* ==========================================================================
+   Zen & Premium Glassmorphic Surfaces
+   ========================================================================== */
+
 .glass-panel {
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
 }
 
 .dark .glass-panel,
 html.dark .glass-panel {
-  background: rgba(19, 27, 42, 0.9);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(30, 41, 59, 0.8);
+  background: rgba(15, 23, 42, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(51, 65, 85, 0.6);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.4);
 }
 
+/* Elevated Glass Card with crisp top light reflection */
+.glass-panel-elevated {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 16px 36px -8px rgba(15, 23, 42, 0.08), inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+}
+
+.dark .glass-panel-elevated,
+html.dark .glass-panel-elevated {
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+}
+
+/* HUD Glass for In-Game Overlay */
+.glass-hud {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05);
+}
+
+.dark .glass-hud,
+html.dark .glass-hud {
+  background: rgba(11, 15, 23, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(30, 41, 59, 0.85);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+}
+
+/* ==========================================================================
+   Tactile Button Physics & Hover Elevation
+   ========================================================================== */
+
+.btn-tactile {
+  transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+}
+
+.btn-tactile:hover {
+  transform: translateY(-1px);
+}
+
+.btn-tactile:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+/* Card hover elevation */
 .card-focus-hover {
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
 }
 
 .card-focus-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 24px -6px rgba(15, 23, 42, 0.06), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.08), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
 }
 
 .dark .card-focus-hover:hover,
 html.dark .card-focus-hover:hover {
-  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.5), 0 4px 10px -2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 18px 36px -8px rgba(0, 0, 0, 0.6), 0 4px 16px -2px rgba(0, 0, 0, 0.4);
 }
 
-/* Smooth Flash Animations */
+/* 3D Physical Dice / Tile Component (for Boggle and Grid Games) */
+.dice-tile-3d {
+  position: relative;
+  transition: all 0.12s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 0 0 rgba(148, 163, 184, 0.5), 0 6px 12px rgba(15, 23, 42, 0.08);
+}
+
+.dice-tile-3d:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 0 0 rgba(148, 163, 184, 0.6), 0 8px 16px rgba(15, 23, 42, 0.12);
+}
+
+.dice-tile-3d:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 0 rgba(148, 163, 184, 0.7), 0 2px 4px rgba(15, 23, 42, 0.06);
+}
+
+.dark .dice-tile-3d {
+  box-shadow: 0 4px 0 0 rgba(30, 41, 59, 1), 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.dark .dice-tile-3d:hover {
+  box-shadow: 0 5px 0 0 rgba(30, 41, 59, 1), 0 8px 16px rgba(0, 0, 0, 0.5);
+}
+
+.dark .dice-tile-3d:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 0 rgba(30, 41, 59, 1), 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* Selected state for 3D dice */
+.dice-tile-selected {
+  transform: translateY(2px) !important;
+  box-shadow: 0 2px 0 0 rgba(13, 148, 136, 0.8), 0 0 16px rgba(20, 184, 166, 0.4) !important;
+}
+
+/* ==========================================================================
+   Smooth Flash & Shimmer Animations
+   ========================================================================== */
+
 @keyframes calm-flash {
   0% { transform: scale(0.96); opacity: 0; filter: blur(2px); }
   25% { transform: scale(1); opacity: 1; filter: blur(0px); }
@@ -81,7 +180,6 @@ html.dark .card-focus-hover:hover {
   animation: calm-flash 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Gentle Soft Pulse */
 @keyframes zen-pulse {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.75; transform: scale(1.02); }
@@ -91,7 +189,28 @@ html.dark .card-focus-hover:hover {
   animation: zen-pulse 2.5s ease-in-out infinite;
 }
 
-/* Clean Custom Scrollbar */
+@keyframes shimmer-sweep {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.animate-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+  animation: shimmer-sweep 2.2s infinite;
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -102,20 +221,28 @@ html.dark .card-focus-hover:hover {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
+  background: rgba(148, 163, 184, 0.35);
   border-radius: 9999px;
 }
 
 .dark ::-webkit-scrollbar-thumb,
 html.dark ::-webkit-scrollbar-thumb {
-  background: rgba(71, 85, 105, 0.4);
+  background: rgba(71, 85, 105, 0.45);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.7);
 }
 
 button, a {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Neural Network & Brain Rotation Keyframes */
+/* Keyframes */
 @keyframes spin-slow {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
@@ -142,7 +269,8 @@ button, a {
   .animate-spin-slow,
   .animate-spin-reverse-slow,
   .animate-zen-pulse,
-  .animate-ping {
+  .animate-ping,
+  .animate-shimmer::after {
     animation: none !important;
   }
 }

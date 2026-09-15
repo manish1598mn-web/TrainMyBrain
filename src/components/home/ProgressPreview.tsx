@@ -70,7 +70,7 @@ export const ProgressPreview: React.FC<ProgressPreviewProps> = ({ onViewFullProg
           {skills.map((s) => {
             const Icon = iconMap[s.name] || Brain;
             const barColor = colorMap[s.name] || 'bg-teal-500';
-            const progressPercent = Math.min(100, Math.max(12, s.mastery));
+            const progressPercent = Math.min(100, Math.max(0, s.mastery));
 
             return (
               <div key={s.name} className="flex items-center gap-3">
@@ -92,12 +92,12 @@ export const ProgressPreview: React.FC<ProgressPreviewProps> = ({ onViewFullProg
                   </div>
                 </div>
 
-                <div className="w-20 text-right shrink-0 flex items-center justify-end gap-1.5">
-                  <span className="text-[10px] font-semibold text-slate-400">
+                <div className="w-24 text-right shrink-0 flex items-center justify-end gap-1.5">
+                  <span className={`text-[10px] font-semibold ${s.status === 'Unplayed' ? 'text-slate-400 dark:text-slate-500 italic' : 'text-teal-600 dark:text-teal-400'}`}>
                     {s.status}
                   </span>
                   <span className="text-xs font-mono font-bold text-slate-900 dark:text-white">
-                    {s.level}
+                    {s.status === 'Unplayed' ? 'L1' : `L${s.level}`}
                   </span>
                 </div>
               </div>

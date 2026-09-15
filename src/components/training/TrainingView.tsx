@@ -141,7 +141,7 @@ export const TrainingView: React.FC<TrainingViewProps> = ({
   }, [currentProblem, feedback, sessionCompleted]);
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col items-center justify-between p-4 selection:bg-amber-500 selection:text-black">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-900 dark:bg-[#0B0F17] dark:text-slate-100 flex flex-col items-center justify-between p-4 transition-colors select-none selection:bg-amber-500 selection:text-black">
       
       {/* 1. Header Toolbar */}
       <div className="w-full max-w-lg flex items-center justify-between py-2 border-b border-slate-800 mb-3">

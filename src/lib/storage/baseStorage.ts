@@ -2,7 +2,8 @@ export const STORAGE_KEYS = {
   PLAYER: 'trainmybrain_player',
   PROGRESS: 'trainmybrain_progress',
   SETTINGS: 'trainmybrain_settings',
-  HISTORY: 'trainmybrain_history'
+  HISTORY: 'trainmybrain_history',
+  VOCABULARY: 'trainmybrain_vocabulary'
 } as const;
 
 export function safeGetItem<T>(key: string, fallback: T): T {

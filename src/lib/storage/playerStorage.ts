@@ -24,7 +24,7 @@ const defaultPlayer: UserProfile = {
   overallMindLevel: 1,
   soundEnabled: true,
   hapticEnabled: true,
-  theme: 'light'
+  theme: 'dark'
 };
 
 export const playerStorage = {

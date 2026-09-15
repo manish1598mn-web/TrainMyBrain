@@ -12,7 +12,7 @@ export interface SkillItem {
   name: string;
   level: number;
   mastery: number;
-  status: 'Strong' | 'Good' | 'Developing';
+  status: 'Strong' | 'Good' | 'Developing' | 'Unplayed';
   icon: string;
   gameId: GameId;
 }
@@ -71,7 +71,7 @@ export const useProgressStore = create<ProgressState>((set, get) => {
       const currentProgress = state.games[gameId];
       const previousLevel = currentProgress.level;
       const levelToEvaluate = playedLevel ?? previousLevel;
-      const previousMastery = currentProgress.mastery ?? 25;
+      const previousMastery = currentProgress.mastery ?? 0;
       const previousAvgTime = currentProgress.averageTimeMs;
       const attemptsAtLevel = currentProgress.attemptsAtCurrentLevel ?? 0;
       const recentPerformances = currentProgress.recentPerformances ?? [];

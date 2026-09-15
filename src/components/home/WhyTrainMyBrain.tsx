@@ -21,14 +21,14 @@ export const WhyTrainMyBrain: React.FC = () => {
       oneLiner: 'Calculate fast flashing numbers directly in your head — zero rough sheets needed.',
       flowSteps: [
         { label: 'Step 1', value: 'Flash 48', tag: 'Buffer Init' },
-        { label: 'Step 2', value: '+ 19 ➔ 67', tag: 'Mental Add' },
-        { label: 'Step 3', value: '- 14 ➔ 53', tag: 'Mental Sub' },
+        { label: 'Step 2', value: '+ 19 → 67', tag: 'Mental Add' },
+        { label: 'Step 3', value: '- 14 → 53', tag: 'Mental Sub' },
         { label: 'Output', value: 'Answer: 53', tag: 'Fast Input' }
       ],
       points: [
         { title: 'Core Feature', text: 'Multi-operator arithmetic (+, -, ×, ÷, %, √) with 1200ms to 250ms flash speeds.' },
         { title: 'Exam Impact', text: 'Cuts calculation time by 50%+ in Quant, Data Interpretation & speed tests.' },
-        { title: 'Brain Faculty', text: 'Expands Frontal Lobe working memory buffer capacity and numerical agility.' }
+        { title: 'Brain Faculty', text: 'Improves mental calculation speed and working memory retention.' }
       ]
     },
     {
@@ -42,13 +42,13 @@ export const WhyTrainMyBrain: React.FC = () => {
       flowSteps: [
         { label: 'Trap', value: 'PRINCIPAL vs PRINCIPLE', tag: 'Head vs Rule' },
         { label: 'Root', value: 'CHRON = Time', tag: 'Chronology' },
-        { label: 'Match', value: 'CANDID ➔ FRANK', tag: 'Synonym' },
+        { label: 'Match', value: 'CANDID → FRANK', tag: 'Synonym' },
         { label: 'Speed', value: '< 1.2s Decision', tag: 'Fast Verdict' }
       ],
       points: [
         { title: 'Core Feature', text: 'Synonyms, antonyms, roots, and easily confused paronyms scaling up to 35 options.' },
         { title: 'Exam Impact', text: 'Accelerates reading comprehension, cloze test solving, and verbal accuracy.' },
-        { title: 'Brain Faculty', text: 'Trains Language Cortex orthographic discrimination and verbal working memory.' }
+        { title: 'Brain Faculty', text: 'Enhances reading fluency, word recall, and grammar accuracy.' }
       ]
     },
     {
@@ -61,14 +61,14 @@ export const WhyTrainMyBrain: React.FC = () => {
       oneLiner: '8-way dynamic grid letter pathing powered by instant dictionary Trie verification.',
       flowSteps: [
         { label: 'Grid', value: '4x4 to 25x25 Dice', tag: 'Vowel Balanced' },
-        { label: 'Link', value: 'T ➔ E ➔ S ➔ T', tag: 'Adjacent Path' },
+        { label: 'Link', value: 'T → E → S → T', tag: 'Adjacent Path' },
         { label: 'Check', value: 'Valid Dictionary Word', tag: 'Trie Verified' },
         { label: 'Timer', value: '10s Per Target Word', tag: 'Dynamic Time' }
       ],
       points: [
         { title: 'Core Feature', text: '4x4 to 25x25 dynamic grids with sub-millisecond Prefix Trie verification.' },
         { title: 'Exam Impact', text: 'Builds sharp peripheral scanning for data tables and rapid anagram recognition.' },
-        { title: 'Brain Faculty', text: 'Engages Occipital-Temporal pathways for spatial search and executive focus.' }
+        { title: 'Brain Faculty', text: 'Builds rapid visual pattern discovery and focused word recognition.' }
       ]
     },
     {
@@ -88,7 +88,7 @@ export const WhyTrainMyBrain: React.FC = () => {
       points: [
         { title: 'Core Feature', text: 'S1 to S14 deduction taxonomy (Naked Singles to X-Wing) with 3-tier progressive hints.' },
         { title: 'Exam Impact', text: 'Instantly identifies invalid options in seating, floor, and arrangement puzzles.' },
-        { title: 'Brain Faculty', text: 'Sharpens Parietal Lobe constraint reasoning and candidate filtering.' }
+        { title: 'Brain Faculty', text: 'Strengthens logical deduction and rapid option elimination.' }
       ]
     },
     {
@@ -108,7 +108,7 @@ export const WhyTrainMyBrain: React.FC = () => {
       points: [
         { title: 'Core Feature', text: '8 categories (Linear, Circular, Floor, Box Stacking, Blood Relations) scaling up to 12+ entities.' },
         { title: 'Exam Impact', text: 'Direct mastery over complex seating arrangements and scheduling questions.' },
-        { title: 'Brain Faculty', text: 'Strengthens Temporal Lobe relational mapping and multi-variable synthesis.' }
+        { title: 'Brain Faculty', text: 'Builds mastery over relational logic, sequencing, and complex conditions.' }
       ]
     },
     {
@@ -123,7 +123,7 @@ export const WhyTrainMyBrain: React.FC = () => {
         { label: 'Level T1', value: '1.00% of L1', tag: 'Ultra-Gentle Entry' },
         { label: 'Level T5', value: '7.72% of L1', tag: 'Gentle Step' },
         { label: 'Level T9', value: '59.52% of L1', tag: 'Gateway Sprint' },
-        { label: 'Level T10', value: '100% = Main L1', tag: '🎓 Graduation' }
+        { label: 'Level T10', value: '100% = Main L1', tag: 'Graduation Milestone' }
       ],
       points: [
         { title: 'Core Feature', text: 'Exact 0.60x formula (T(N-1) = T(N) * 0.60) with 15–20 mixed adaptive problems per session.' },
@@ -394,7 +394,7 @@ export const WhyTrainMyBrain: React.FC = () => {
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-800 text-[11px] font-mono text-slate-400 uppercase">
                 <th className="pb-3 pr-4 font-bold">Game</th>
-                <th className="pb-3 px-4 font-bold">Cognitive Faculty</th>
+                <th className="pb-3 px-4 font-bold">Core Skill</th>
                 <th className="pb-3 px-4 font-bold">Exam Section</th>
                 <th className="pb-3 pl-4 font-bold">Key Benefit</th>
               </tr>
@@ -404,7 +404,7 @@ export const WhyTrainMyBrain: React.FC = () => {
                 <td className="py-3.5 pr-4 font-bold text-slate-900 dark:text-white font-mono flex items-center gap-2">
                   <Zap className="w-4 h-4 text-amber-500" /> Pro Calculations
                 </td>
-                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">Working Memory Flash Buffer</td>
+                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">Mental Math & Calculation</td>
                 <td className="py-3.5 px-4 text-teal-600 dark:text-teal-400 font-bold font-mono">Quantitative Aptitude</td>
                 <td className="py-3.5 pl-4 text-slate-500 dark:text-slate-400">Fast mental arithmetic & approximations</td>
               </tr>
@@ -412,7 +412,7 @@ export const WhyTrainMyBrain: React.FC = () => {
                 <td className="py-3.5 pr-4 font-bold text-slate-900 dark:text-white font-mono flex items-center gap-2">
                   <Eye className="w-4 h-4 text-sky-500" /> Word Speed
                 </td>
-                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">Language Cortex Discrimination</td>
+                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">Verbal Processing & Grammar</td>
                 <td className="py-3.5 px-4 text-sky-600 dark:text-sky-400 font-bold font-mono">English & Verbal Ability</td>
                 <td className="py-3.5 pl-4 text-slate-500 dark:text-slate-400">Reading speed, cloze tests & paronym traps</td>
               </tr>
@@ -428,7 +428,7 @@ export const WhyTrainMyBrain: React.FC = () => {
                 <td className="py-3.5 pr-4 font-bold text-slate-900 dark:text-white font-mono flex items-center gap-2">
                   <Grid3X3 className="w-4 h-4 text-purple-500" /> Sudoku Reflex
                 </td>
-                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">Parietal Constraint Deduction</td>
+                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">Logical Deduction & Elimination</td>
                 <td className="py-3.5 px-4 text-purple-600 dark:text-purple-400 font-bold font-mono">Logical Reasoning</td>
                 <td className="py-3.5 pl-4 text-slate-500 dark:text-slate-400">Instant elimination of invalid branch options</td>
               </tr>
@@ -436,7 +436,7 @@ export const WhyTrainMyBrain: React.FC = () => {
                 <td className="py-3.5 pr-4 font-bold text-slate-900 dark:text-white font-mono flex items-center gap-2">
                   <Layers className="w-4 h-4 text-emerald-500" /> Puzzles
                 </td>
-                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">Relational Coordinate Mapping</td>
+                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">Relational & Analytical Reasoning</td>
                 <td className="py-3.5 px-4 text-emerald-600 dark:text-emerald-400 font-bold font-mono">Analytical Puzzles</td>
                 <td className="py-3.5 pl-4 text-slate-500 dark:text-slate-400">Seating arrangements, floors & scheduling</td>
               </tr>
@@ -444,7 +444,7 @@ export const WhyTrainMyBrain: React.FC = () => {
                 <td className="py-3.5 pr-4 font-bold text-slate-900 dark:text-white font-mono flex items-center gap-2">
                   <Target className="w-4 h-4 text-amber-500" /> Training Mode
                 </td>
-                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">Gentle Multi-Faculty Foundation</td>
+                <td className="py-3.5 px-4 text-slate-600 dark:text-slate-300 font-medium">Foundational Training</td>
                 <td className="py-3.5 px-4 text-amber-600 dark:text-amber-400 font-bold font-mono">All Competitive Exams</td>
                 <td className="py-3.5 pl-4 text-slate-500 dark:text-slate-400">10-level gentle step ramp to build speed</td>
               </tr>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { GameId } from '../../engine/game-engine/types';
 import { soundManager } from '../../lib/sound';
 import { NeuronActivityPulseBackground } from '../background/NeuronActivityPulseBackground';
@@ -32,11 +32,14 @@ export const Hero: React.FC<HeroProps> = ({
       {/* Brain Activity Pulse = Neuron System Background (Hero Convergence) */}
       <NeuronActivityPulseBackground theme="hero-convergence" />
 
+      {/* Ambient Radial Spotlight Glow */}
+      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[340px] bg-gradient-to-tr from-teal-500/15 via-indigo-500/10 to-amber-500/10 rounded-full blur-3xl pointer-events-none -z-10" />
+
       {/* 1. Header Section: Headline & Value Proposition */}
       <div className="relative z-10 max-w-4xl mx-auto text-center mb-6 sm:mb-8">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-100/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 mb-4 shadow-xs backdrop-blur-xs">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700/60 mb-4 shadow-xs backdrop-blur-md">
           <span className="flex h-2 w-2 rounded-full bg-teal-500 animate-pulse" />
-          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 font-mono">
+          <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 font-mono tracking-tight">
             Cognitive Speed & Mental Agility
           </span>
         </div>
@@ -52,23 +55,24 @@ export const Hero: React.FC<HeroProps> = ({
           Train core cognitive speed, working memory, and logical reflex across 5 adaptive disciplines.
         </p>
 
-        <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-3.5">
           {onPlayTraining && (
             <button
               onClick={() => {
                 soundManager.playTap();
                 onPlayTraining();
               }}
-              className="px-6 py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs sm:text-sm shadow-md active:scale-98 transition-all flex items-center gap-2 border border-amber-400"
+              className="btn-tactile px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black text-xs sm:text-sm shadow-md shadow-amber-500/20 hover:shadow-amber-500/30 flex items-center gap-2 border border-amber-300/80 cursor-pointer"
             >
-              <span>??? Training — Build Fundamentals</span>
+              <Sparkles className="w-4 h-4 text-slate-950 fill-amber-300" />
+              <span>Foundational Training · Build Fundamentals</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           )}
 
           <button
             onClick={handleScrollToGames}
-            className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold text-xs sm:text-sm shadow-md active:scale-98 transition-all flex items-center gap-2"
+            className="btn-tactile px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-slate-100 dark:hover:bg-white text-white dark:text-slate-900 font-bold text-xs sm:text-sm shadow-md shadow-slate-900/10 dark:shadow-white/5 flex items-center gap-2 border border-slate-700/30 dark:border-slate-300/30 cursor-pointer"
           >
             <span>Explore 5 Brain Games</span>
             <ArrowRight className="w-4 h-4" />

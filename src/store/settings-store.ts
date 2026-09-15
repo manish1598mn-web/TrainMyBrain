@@ -22,12 +22,13 @@ export const useSettingsStore = create<SettingsState>((set, get) => {
   soundManager.setEnabled(saved.soundEnabled);
   soundManager.setSoundPack(saved.soundPack || 'zen');
 
-  // Apply dark mode class to html document if saved
+  // Default to dark mode unless explicitly set to light
+  const initialTheme = saved.theme || 'dark';
   if (typeof document !== 'undefined') {
-    if (saved.theme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
+    if (initialTheme === 'light') {
       document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.add('dark');
     }
   }
 
@@ -47,7 +48,7 @@ export const useSettingsStore = create<SettingsState>((set, get) => {
     soundPack: saved.soundPack || 'zen',
     hapticEnabled: saved.hapticEnabled,
     reducedMotion: saved.reducedMotion,
-    theme: saved.theme,
+    theme: saved.theme || 'dark',
 
     toggleSound: () => {
       const next = !get().soundEnabled;

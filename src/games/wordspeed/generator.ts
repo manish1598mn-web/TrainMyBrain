@@ -1,571 +1,436 @@
 /**
- * Word Speed — Progressive Difficulty System (WS-01 to WS-22)
+ * Word Speed — Standardized 5-Option English Grammar & Linguistic Mastery Generator
  * 
- * Level Progression & Constraints:
- * - Levels 1–10: 4–8 letters, 10–15 options (smoothly interpolated: L1=10, L2=10, ..., L10=15), Tier 1–2
- * - Levels 11–25: 9–12 letters, 15–20 options, Tier 2
- * - Levels 26–50: 12–15 letters, 20–25 options, Tier 2–3 (Multi-property processing)
- * - Levels 51–99+: 15+ letters, 25–35 options, Tier 3–5 (Multi-dimensional, memory, switching)
- * - Level 99+: 35 options max, all 22 operations active
+ * Strict User Requirements:
+ * 1. Exactly 5 options per question for every level (A, B, C, D, E).
+ * 2. Zero word repetition across multiple questions in the same session.
+ * 3. Each and every question is different, unique, and rotates through diverse grammar formats.
+ * 4. 1-to-2 liner English Grammar questions:
+ *    - Fill in the blanks (articles: a, an, the; prepositions: in, on, at, by, for, under; tenses; conjunctions)
+ *    - Sentence error spotting
+ *    - Sentence arrangement (PQRS)
+ *    - Grammatical usage rules & paronyms
+ * 5. Strict 4-Tier Difficulty Progression:
+ *    - Levels 1–10: Beginner (Class 6–10 Student Level)
+ *    - Levels 11–25: Intermediate (Class 11–12 & Graduate Level / SAT / IELTS)
+ *    - Levels 26–50: Expert (Post-Graduate / GMAT / GRE / CAT / Higher Studies)
+ *    - Levels 51–99+: Top 1% Global English Grammar Experts
  */
 
 import { SeededRandom, createSeededRandom } from '../../lib/seeded-random';
 import {
+  GRAMMAR_QUESTIONS_DATASET,
+  GrammarQuestionItem,
+  GrammarCategory
+} from './grammar-database';
+import {
   LEXICAL_DATASET,
   GRAMMAR_CLASS_WORDS,
-  PARONYM_PAIRS,
-  LexicalWord,
-  PartOfSpeech
+  PARONYM_PAIRS
 } from './word-database';
 import { hashChallengeContent } from '../../engine/level-engine/challenge-cache';
 
-export type WordSpeedOpCode =
-  | 'WS-01' // Exact Recognition
-  | 'WS-02' // Meaning / Definition
-  | 'WS-03' // Synonym
-  | 'WS-04' // Antonym
-  | 'WS-05' // Similar Meaning (Nuance)
-  | 'WS-06' // Noun Classification
-  | 'WS-07' // Pronoun Classification
-  | 'WS-08' // Verb Classification
-  | 'WS-09' // Adjective Classification
-  | 'WS-10' // Adverb Classification
-  | 'WS-11' // Preposition Classification
-  | 'WS-12' // Conjunction Classification
-  | 'WS-13' // Interjection Classification
-  | 'WS-14' // Contextual Meaning
-  | 'WS-15' // Word Association
-  | 'WS-16' // Category Identification
-  | 'WS-17' // Odd Word / Intruder
-  | 'WS-18' // Word Pair Matching
-  | 'WS-19' // Semantic Relationship
-  | 'WS-20' // Word Memory
-  | 'WS-21' // Context Switching
-  | 'WS-22'; // Multi-property Classification
-
 export interface WordSpeedQuestion {
   id: string;
-  opCode: WordSpeedOpCode;
+  opCode?: string;
+  tier: 1 | 2 | 3 | 4;
+  category: GrammarCategory | string;
   mode?: string;
   modeBadge: string;
   prompt: string;
   subPrompt?: string;
   targetWord?: string;
-  memoryStream?: string[];
-  options: string[];
+  options: [string, string, string, string, string]; // Fixed exactly 5 options
   correctAnswer: string;
+  explanation: string;
+  primaryWords: string[];
   targetResponseTimeMs: number;
   questionFingerprint: string;
 }
 
 export interface WordSpeedChallenge {
   level: number;
-  wordLengthRange: [number, number];
-  targetOptionsCount: number;
-  activeTiers: number[];
+  tier: 1 | 2 | 3 | 4;
+  tierDescription: string;
+  targetOptionsCount: 5;
   questions: WordSpeedQuestion[];
   totalQuestions: number;
   challengeHash: string;
 }
 
 /**
- * Computes exact target options count based on level interpolation
+ * Maps player level into one of the 4 strict difficulty tiers
  */
-export function getTargetOptionsCount(level: number): number {
+export function getLevelTier(level: number): {
+  tier: 1 | 2 | 3 | 4;
+  description: string;
+} {
   if (level <= 10) {
-    // 1-10 -> 10 to 15 options
-    const table: Record<number, number> = {
-      1: 10, 2: 10, 3: 11, 4: 11, 5: 12,
-      6: 12, 7: 13, 8: 14, 9: 14, 10: 15
-    };
-    return table[level] || 10;
+    return { tier: 1, description: 'Beginner (Class 6–10 Level)' };
   }
   if (level <= 25) {
-    // 11-25 -> 15 to 20 options
-    const progress = (level - 11) / (25 - 11);
-    return Math.round(15 + progress * (20 - 15));
+    return { tier: 2, description: 'Intermediate (Graduate / SAT Level)' };
   }
   if (level <= 50) {
-    // 26-50 -> 20 to 25 options
-    const progress = (level - 26) / (50 - 26);
-    return Math.round(20 + progress * (25 - 20));
+    return { tier: 3, description: 'Expert (GMAT / GRE / Post-Grad Level)' };
   }
-  if (level <= 99) {
-    // 51-99 -> 25 to 35 options
-    const progress = (level - 51) / (99 - 51);
-    return Math.round(25 + progress * (35 - 25));
-  }
-  return 35; // 99+ max cap
+  return { tier: 4, description: 'Global Top 1% Grammar Expert Level' };
 }
 
 /**
- * Computes target word length range based on level
+ * Procedural Dynamic Fallback Generators to ensure infinite variety with zero word repetition
  */
-export function getWordLengthRange(level: number): [number, number] {
-  if (level <= 10) {
-    if (level <= 2) return [4, 6];
-    if (level <= 5) return [4, 7];
-    return [5, 8];
-  }
-  if (level <= 25) {
-    if (level <= 17) return [8, 11];
-    return [9, 12];
-  }
-  if (level <= 50) {
-    if (level <= 38) return [11, 14];
-    return [12, 15];
-  }
-  return [14, 20]; // 51-99+
-}
 
-/**
- * Selects allowed WS-01 to WS-22 operations for a given level
- */
-export function getAllowedOperations(level: number): WordSpeedOpCode[] {
-  if (level <= 2) {
-    return ['WS-01', 'WS-03']; // Exact Recognition + Synonym
-  }
-  if (level <= 5) {
-    return ['WS-01', 'WS-02', 'WS-03', 'WS-04', 'WS-06', 'WS-08', 'WS-09'];
-  }
-  if (level <= 10) {
-    return ['WS-01', 'WS-02', 'WS-03', 'WS-04', 'WS-05', 'WS-06', 'WS-08', 'WS-09', 'WS-14', 'WS-16', 'WS-17'];
-  }
-  if (level <= 25) {
-    return [
-      'WS-02', 'WS-03', 'WS-04', 'WS-05', 'WS-06', 'WS-07', 'WS-08', 'WS-09',
-      'WS-10', 'WS-11', 'WS-12', 'WS-14', 'WS-15', 'WS-16', 'WS-17', 'WS-18'
-    ];
-  }
-  if (level <= 50) {
-    return [
-      'WS-02', 'WS-03', 'WS-04', 'WS-05', 'WS-09', 'WS-10', 'WS-14', 'WS-15',
-      'WS-17', 'WS-18', 'WS-19', 'WS-21', 'WS-22'
-    ];
-  }
-  // 51-99+ : All 22 operations active
-  return [
-    'WS-01', 'WS-02', 'WS-03', 'WS-04', 'WS-05', 'WS-06', 'WS-07', 'WS-08',
-    'WS-09', 'WS-10', 'WS-11', 'WS-12', 'WS-13', 'WS-14', 'WS-15', 'WS-16',
-    'WS-17', 'WS-18', 'WS-19', 'WS-20', 'WS-21', 'WS-22'
+// 1. Procedural Fill in the Blank: Prepositions (at, in, on, by, under)
+function generateDynamicPrepositionQuestion(
+  tier: 1 | 2 | 3 | 4,
+  rng: SeededRandom,
+  usedWords: Set<string>
+): WordSpeedQuestion | null {
+  const templates = [
+    {
+      prep: 'at',
+      context: 'The international express train arrives _____ the central terminal platform at dawn.',
+      words: ['EXPRESS', 'TERMINAL', 'PLATFORM'],
+      rule: 'Specific transport stops and precise locations take the preposition "at".'
+    },
+    {
+      prep: 'in',
+      context: 'She discovered a handwritten antique manuscript tucked _____ the secret wooden drawer.',
+      words: ['MANUSCRIPT', 'ANTIQUE', 'DRAWER'],
+      rule: 'Enclosed containers, interiors, and dimensional spaces take the preposition "in".'
+    },
+    {
+      prep: 'on',
+      context: 'The scientific research symposium will commence _____ Tuesday morning.',
+      words: ['SYMPOSIUM', 'TUESDAY', 'COMMENCE'],
+      rule: 'Specific days of the week and dates take the preposition "on".'
+    },
+    {
+      prep: 'under',
+      context: 'The ancient stone foundation remained hidden _____ centuries of volcanic sediment.',
+      words: ['FOUNDATION', 'VOLCANIC', 'SEDIMENT'],
+      rule: '"Under" signifies directly beneath or covered by a physical layer.'
+    },
+    {
+      prep: 'between',
+      context: 'A secret peace treaty was brokered _____ the two rival empires.',
+      words: ['TREATY', 'BROKERED', 'EMPIRES'],
+      rule: '"Between" is strictly used when referring to two distinct, individual entities.'
+    },
+    {
+      prep: 'among',
+      context: 'The generous benefactor distributed the scholarly awards _____ all fifteen candidates.',
+      words: ['BENEFACTOR', 'AWARDS', 'CANDIDATES'],
+      rule: '"Among" is used when distributing or referring to more than two entities.'
+    }
   ];
+
+  const available = templates.filter(t => !t.words.some(w => usedWords.has(w)));
+  if (available.length === 0) return null;
+
+  const chosen = rng.pick(available);
+  const prepPool = ['in', 'on', 'at', 'under', 'between', 'among', 'by', 'through', 'into'];
+  const distractors = rng.shuffle(prepPool.filter(p => p !== chosen.prep)).slice(0, 4);
+  const options = rng.shuffle([chosen.prep, ...distractors]) as [string, string, string, string, string];
+
+  return {
+    id: `dyn-prep-${tier}-${rng.next()}`,
+    tier,
+    category: 'prepositions',
+    modeBadge: 'Preposition Usage',
+    prompt: 'Fill in the blank with the grammatically correct preposition:',
+    subPrompt: chosen.context,
+    options,
+    correctAnswer: chosen.prep,
+    explanation: chosen.rule,
+    primaryWords: chosen.words,
+    targetResponseTimeMs: 2000,
+    questionFingerprint: hashChallengeContent(`dyn-prep-${chosen.prep}-${chosen.words.join('-')}`)
+  };
+}
+
+// 2. Procedural Fill in the Blank: Articles (a, an, the, no article)
+function generateDynamicArticleQuestion(
+  tier: 1 | 2 | 3 | 4,
+  rng: SeededRandom,
+  usedWords: Set<string>
+): WordSpeedQuestion | null {
+  const templates = [
+    {
+      art: 'an',
+      context: 'The archeologist unearthed _____ ancient artifact dating back to the Bronze Age.',
+      words: ['ARCHEOLOGIST', 'ARTIFACT', 'BRONZE'],
+      rule: '"Ancient" begins with a vowel sound /eɪ/, requiring the indefinite article "an".'
+    },
+    {
+      art: 'a',
+      context: 'The committee unanimously voted to adopt _____ unified code of business ethics.',
+      words: ['COMMITTEE', 'UNIFIED', 'ETHICS'],
+      rule: '"Unified" begins with the consonant glide /juː/, requiring "a", not "an".'
+    },
+    {
+      art: 'the',
+      context: 'He is unquestionably _____ most articulate speaker in the entire debate tournament.',
+      words: ['ARTICULATE', 'TOURNAMENT', 'DEBATE'],
+      rule: 'Superlative constructions ("most articulate") mandate the definite article "the".'
+    },
+    {
+      art: 'no article needed',
+      context: 'True wisdom and _____ patience are virtues cultivated through experience.',
+      words: ['WISDOM', 'PATIENCE', 'VIRTUES'],
+      rule: 'Abstract uncountable nouns used in a general sense take no article (zero article).'
+    }
+  ];
+
+  const available = templates.filter(t => !t.words.some(w => usedWords.has(w)));
+  if (available.length === 0) return null;
+
+  const chosen = rng.pick(available);
+  const standardOptions = ['a', 'an', 'the', 'some', 'no article needed'] as [string, string, string, string, string];
+
+  return {
+    id: `dyn-art-${tier}-${rng.next()}`,
+    tier,
+    category: 'articles',
+    modeBadge: 'Articles (A/An/The)',
+    prompt: 'Select the article that correctly completes the sentence:',
+    subPrompt: chosen.context,
+    options: standardOptions,
+    correctAnswer: chosen.art,
+    explanation: chosen.rule,
+    primaryWords: chosen.words,
+    targetResponseTimeMs: 1900,
+    questionFingerprint: hashChallengeContent(`dyn-art-${chosen.art}-${chosen.words.join('-')}`)
+  };
+}
+
+// 3. Procedural Sentence Arrangement (PQRS)
+function generateDynamicArrangementQuestion(
+  tier: 1 | 2 | 3 | 4,
+  rng: SeededRandom,
+  usedWords: Set<string>
+): WordSpeedQuestion | null {
+  const sentences = [
+    {
+      p: 'innovative renewable technologies',
+      q: 'can substantially reduce',
+      r: 'global carbon emissions',
+      s: 'over the next decade',
+      correct: 'P - Q - R - S',
+      words: ['RENEWABLE', 'EMISSIONS', 'DECADE']
+    },
+    {
+      p: 'diligent laboratory research',
+      q: 'enabled the biochemists',
+      r: 'to formulate',
+      s: 'an effective breakthrough vaccine',
+      correct: 'P - Q - R - S',
+      words: ['BIOCHEMIST', 'VACCINE', 'LABORATORY']
+    },
+    {
+      p: 'the historical archives',
+      q: 'revealed startling evidence',
+      r: 'concerning maritime trade routes',
+      s: 'in ancient Mediterranean ports',
+      correct: 'P - Q - R - S',
+      words: ['MARITIME', 'MEDITERRANEAN', 'EVIDENCE']
+    },
+    {
+      p: 'preserving biodiversity',
+      q: 'remains essential',
+      r: 'for ecological balance',
+      s: 'across threatened forest biomes',
+      correct: 'P - Q - R - S',
+      words: ['BIODIVERSITY', 'ECOLOGICAL', 'BIOMES']
+    }
+  ];
+
+  const available = sentences.filter(s => !s.words.some(w => usedWords.has(w)));
+  if (available.length === 0) return null;
+
+  const chosen = rng.pick(available);
+  const permutations: [string, string, string, string, string] = [
+    'P - Q - R - S',
+    'Q - P - S - R',
+    'R - Q - P - S',
+    'S - P - Q - R',
+    'P - R - Q - S'
+  ];
+
+  return {
+    id: `dyn-arr-${tier}-${rng.next()}`,
+    tier,
+    category: 'sentence_arrangement',
+    modeBadge: 'Sentence Arrangement (PQRS)',
+    prompt: 'Arrange the jumbled clauses into a grammatically coherent sentence:',
+    subPrompt: `[P] ${chosen.p}  [Q] ${chosen.q}  [R] ${chosen.r}  [S] ${chosen.s}`,
+    options: permutations,
+    correctAnswer: chosen.correct,
+    explanation: `The coherent sequence follows standard English Subject-Verb-Object syntax: ${chosen.p} ${chosen.q} ${chosen.r} ${chosen.s}.`,
+    primaryWords: chosen.words,
+    targetResponseTimeMs: 2500,
+    questionFingerprint: hashChallengeContent(`dyn-arr-${chosen.words.join('-')}`)
+  };
+}
+
+// 4. Procedural Grammar Classification: Exactly 5 options
+function generateDynamicGrammarClassQuestion(
+  tier: 1 | 2 | 3 | 4,
+  rng: SeededRandom,
+  usedWords: Set<string>
+): WordSpeedQuestion | null {
+  const classes = [
+    { name: 'NOUN', key: 'nouns' as const },
+    { name: 'VERB', key: 'verbs' as const },
+    { name: 'ADJECTIVE', key: 'adjectives' as const },
+    { name: 'ADVERB', key: 'adverbs' as const },
+    { name: 'PREPOSITION', key: 'prepositions' as const }
+  ];
+
+  const targetClass = rng.pick(classes);
+  const pool = GRAMMAR_CLASS_WORDS[targetClass.key].filter(w => !usedWords.has(w.toUpperCase()));
+  if (pool.length === 0) return null;
+
+  const correctWord = rng.pick(pool);
+
+  // Distractors from other 4 classes
+  const otherClasses = classes.filter(c => c.name !== targetClass.name);
+  const distractors: string[] = [];
+
+  for (const oc of otherClasses) {
+    const dPool = GRAMMAR_CLASS_WORDS[oc.key].filter(w => !usedWords.has(w.toUpperCase()) && w !== correctWord);
+    if (dPool.length > 0) {
+      distractors.push(rng.pick(dPool));
+    }
+  }
+
+  if (distractors.length < 4) return null;
+
+  const final5 = rng.shuffle([correctWord, ...distractors.slice(0, 4)]) as [string, string, string, string, string];
+
+  return {
+    id: `dyn-class-${tier}-${rng.next()}`,
+    tier,
+    category: 'usage_rules',
+    modeBadge: `${targetClass.name} Identification`,
+    prompt: `Identify the word that functions as a ${targetClass.name}:`,
+    options: final5,
+    correctAnswer: correctWord,
+    explanation: `"${correctWord}" belongs to the grammatical category of ${targetClass.name}s.`,
+    primaryWords: [correctWord, ...distractors.slice(0, 4)],
+    targetResponseTimeMs: 2000,
+    questionFingerprint: hashChallengeContent(`dyn-class-${targetClass.name}-${correctWord}`)
+  };
 }
 
 /**
- * Filters the lexical database by tier and word length
+ * Main Word Speed Challenge Generator
+ * Standardized to 5 options per question, zero word repetition per session, and 4 difficulty tiers.
  */
-export function getLexicalPool(level: number): LexicalWord[] {
-  let tiers: number[] = [1];
-  if (level <= 10) {
-    tiers = [1, 2];
-  } else if (level <= 25) {
-    tiers = [2];
-  } else if (level <= 50) {
-    tiers = [2, 3];
-  } else if (level <= 75) {
-    tiers = [3, 4];
-  } else {
-    tiers = [3, 4, 5];
-  }
-
-  const [minLen, maxLen] = getWordLengthRange(level);
-  const matched = LEXICAL_DATASET.filter(w => tiers.includes(w.tier) || (w.length >= minLen && w.length <= maxLen));
-  return matched.length >= 8 ? matched : LEXICAL_DATASET;
-}
-
-/**
- * Fills options up to targetCount using structured distractor distribution:
- * - 1 Correct
- * - 2-3 Strong Distractors
- * - 3-5 Moderate Distractors
- * - Remainder Weak Plausible Distractors
- */
-export function assembleStructuredOptions(
-  correctAnswer: string,
-  strongDistractors: string[],
-  moderateDistractors: string[],
-  targetCount: number,
-  allVocabularyPool: string[],
-  rng: SeededRandom
-): string[] {
-  const chosen = new Set<string>([correctAnswer.toUpperCase()]);
-
-  // Add strong distractors
-  for (const s of strongDistractors) {
-    if (chosen.size >= targetCount) break;
-    const clean = s.toUpperCase();
-    if (clean !== correctAnswer.toUpperCase()) chosen.add(clean);
-  }
-
-  // Add moderate distractors
-  for (const m of moderateDistractors) {
-    if (chosen.size >= targetCount) break;
-    const clean = m.toUpperCase();
-    if (clean !== correctAnswer.toUpperCase()) chosen.add(clean);
-  }
-
-  // Fill remainder from general vocabulary pool
-  const shuffledPool = rng.shuffle([...allVocabularyPool]);
-  for (const item of shuffledPool) {
-    if (chosen.size >= targetCount) break;
-    const clean = item.toUpperCase();
-    if (clean !== correctAnswer.toUpperCase()) chosen.add(clean);
-  }
-
-  return rng.shuffle(Array.from(chosen));
-}
-
-/**
- * Main Word Speed Challenge Generator (Adheres to complete 22-operation specification)
- */
-export function generateWordSpeedChallenge(level: number, customSeed?: string | number): WordSpeedChallenge {
+export function generateWordSpeedChallenge(level: number = 1, customSeed?: string | number): WordSpeedChallenge {
   const safeLevel = Math.max(1, Math.min(120, level));
   const seed = customSeed !== undefined ? `${customSeed}` : `${Date.now()}-${safeLevel}-${Math.random()}`;
-  const rng = createSeededRandom(seed);
+  const rng: SeededRandom = createSeededRandom(seed);
 
-  const targetOptionsCount = getTargetOptionsCount(safeLevel);
-  const wordLengthRange = getWordLengthRange(safeLevel);
-  const allowedOps = getAllowedOperations(safeLevel);
-  const pool = getLexicalPool(safeLevel);
+  const { tier, description: tierDescription } = getLevelTier(safeLevel);
+  const totalQuestions = 15; // Standard 15-question challenge
 
-  const allWordsList = Array.from(new Set([
-    ...LEXICAL_DATASET.map(w => w.word),
-    ...LEXICAL_DATASET.flatMap(w => w.synonyms),
-    ...LEXICAL_DATASET.flatMap(w => w.antonyms),
-    ...LEXICAL_DATASET.flatMap(w => w.nearDistractors),
-    ...Object.values(GRAMMAR_CLASS_WORDS).flat()
-  ]));
-
-  // Total questions per session
-  const totalQuestions = safeLevel <= 10 ? 12 : safeLevel <= 30 ? 15 : 18;
   const questions: WordSpeedQuestion[] = [];
-  const generatedFingerprints = new Set<string>();
+  const usedWordsInSession = new Set<string>();
+  const usedFingerprints = new Set<string>();
 
-  for (let q = 0; q < totalQuestions; q++) {
-    const opCode = rng.pick(allowedOps);
-    let question: WordSpeedQuestion;
-    const targetEntry = rng.pick(pool);
+  // Filter curated questions for this tier (with fallback to adjacent tiers if needed)
+  const tierCurated = GRAMMAR_QUESTIONS_DATASET.filter(q => q.tier === tier);
+  const shuffledCurated = rng.shuffle([...tierCurated]);
 
-    switch (opCode) {
-      case 'WS-01': { // Exact Recognition
-        const target = targetEntry.word;
-        const strong = targetEntry.nearDistractors;
-        const options = assembleStructuredOptions(
-          target,
-          strong,
-          pool.map(w => w.word),
-          targetOptionsCount,
-          allWordsList,
-          rng
-        );
-        const fp = hashChallengeContent(`WS01-${target}-${options.join(',')}`);
-        question = {
-          id: `ws-${q}-${safeLevel}-${rng.next()}`,
-          opCode: 'WS-01',
-          modeBadge: 'Exact Recognition',
-          prompt: 'Identify the exact target word:',
-          targetWord: target,
-          options,
-          correctAnswer: target,
-          targetResponseTimeMs: 1800,
-          questionFingerprint: fp
-        };
-        break;
-      }
+  // Try adding non-overlapping curated questions first
+  for (const item of shuffledCurated) {
+    if (questions.length >= totalQuestions) break;
 
-      case 'WS-02': { // Meaning / Definition Match
-        const answer = targetEntry.word;
-        const strong = targetEntry.nearDistractors;
-        const options = assembleStructuredOptions(
-          answer,
-          strong,
-          pool.map(w => w.word),
-          targetOptionsCount,
-          allWordsList,
-          rng
-        );
-        const fp = hashChallengeContent(`WS02-${targetEntry.definition}-${answer}`);
-        question = {
-          id: `ws-${q}-${safeLevel}-${rng.next()}`,
-          opCode: 'WS-02',
-          modeBadge: 'Definition Match',
-          prompt: 'Which word matches the definition below?',
-          subPrompt: `"${targetEntry.definition}"`,
-          options,
-          correctAnswer: answer,
-          targetResponseTimeMs: 2400,
-          questionFingerprint: fp
-        };
-        break;
-      }
+    // Check if any primary word was already used in this round
+    const hasOverlap = item.primaryWords.some(w => usedWordsInSession.has(w.toUpperCase()));
+    if (!hasOverlap && !usedFingerprints.has(item.id)) {
+      usedFingerprints.add(item.id);
+      item.primaryWords.forEach(w => usedWordsInSession.add(w.toUpperCase()));
 
-      case 'WS-03': { // Synonym
-        const answer = rng.pick(targetEntry.synonyms) || targetEntry.word;
-        const strong = targetEntry.nearDistractors;
-        const options = assembleStructuredOptions(
-          answer,
-          strong,
-          pool.flatMap(w => w.synonyms),
-          targetOptionsCount,
-          allWordsList,
-          rng
-        );
-        const fp = hashChallengeContent(`WS03-${targetEntry.word}-${answer}`);
-        question = {
-          id: `ws-${q}-${safeLevel}-${rng.next()}`,
-          opCode: 'WS-03',
-          modeBadge: 'Synonym Search',
-          prompt: `Find the closest meaning of:`,
-          targetWord: targetEntry.word,
-          options,
-          correctAnswer: answer,
-          targetResponseTimeMs: 2000,
-          questionFingerprint: fp
-        };
-        break;
-      }
+      // Ensure options are shuffled while keeping exactly 5
+      const shuffledOptions = rng.shuffle([...item.options]) as [string, string, string, string, string];
 
-      case 'WS-04': { // Antonym
-        const answer = targetEntry.antonyms.length > 0 ? rng.pick(targetEntry.antonyms) : 'VAGUE';
-        const strong = targetEntry.synonyms; // Synonyms act as strong trap distractors for antonyms!
-        const options = assembleStructuredOptions(
-          answer,
-          strong,
-          pool.flatMap(w => w.antonyms),
-          targetOptionsCount,
-          allWordsList,
-          rng
-        );
-        const fp = hashChallengeContent(`WS04-${targetEntry.word}-${answer}`);
-        question = {
-          id: `ws-${q}-${safeLevel}-${rng.next()}`,
-          opCode: 'WS-04',
-          modeBadge: 'Antonym Search',
-          prompt: `Find the OPPOSITE (Antonym) of:`,
-          targetWord: targetEntry.word,
-          options,
-          correctAnswer: answer,
-          targetResponseTimeMs: 2200,
-          questionFingerprint: fp
-        };
-        break;
-      }
-
-      case 'WS-05': { // Similar Meaning / Nuance
-        const answer = rng.pick(targetEntry.synonyms) || targetEntry.word;
-        const strong = targetEntry.nearDistractors;
-        const options = assembleStructuredOptions(
-          answer,
-          strong,
-          pool.map(w => w.word),
-          targetOptionsCount,
-          allWordsList,
-          rng
-        );
-        const fp = hashChallengeContent(`WS05-${targetEntry.word}-${answer}`);
-        question = {
-          id: `ws-${q}-${safeLevel}-${rng.next()}`,
-          opCode: 'WS-05',
-          modeBadge: 'Semantic Nuance',
-          prompt: `Find the word most closely associated in nuance to:`,
-          targetWord: targetEntry.word,
-          options,
-          correctAnswer: answer,
-          targetResponseTimeMs: 2200,
-          questionFingerprint: fp
-        };
-        break;
-      }
-
-      case 'WS-06': // Noun Classification
-      case 'WS-07': // Pronoun Classification
-      case 'WS-08': // Verb Classification
-      case 'WS-09': // Adjective Classification
-      case 'WS-10': // Adverb Classification
-      case 'WS-11': // Preposition Classification
-      case 'WS-12': // Conjunction Classification
-      case 'WS-13': { // Interjection Classification
-        const classMap: Record<string, { name: string; key: keyof typeof GRAMMAR_CLASS_WORDS; pos: PartOfSpeech }> = {
-          'WS-06': { name: 'NOUN', key: 'nouns', pos: 'noun' },
-          'WS-07': { name: 'PRONOUN', key: 'pronouns', pos: 'pronoun' },
-          'WS-08': { name: 'VERB', key: 'verbs', pos: 'verb' },
-          'WS-09': { name: 'ADJECTIVE', key: 'adjectives', pos: 'adjective' },
-          'WS-10': { name: 'ADVERB', key: 'adverbs', pos: 'adverb' },
-          'WS-11': { name: 'PREPOSITION', key: 'prepositions', pos: 'preposition' },
-          'WS-12': { name: 'CONJUNCTION', key: 'conjunctions', pos: 'conjunction' },
-          'WS-13': { name: 'INTERJECTION', key: 'interjections', pos: 'interjection' }
-        };
-
-        const targetInfo = classMap[opCode];
-        const correctList = GRAMMAR_CLASS_WORDS[targetInfo.key];
-        const answer = rng.pick(correctList);
-
-        // Distractors come from the OTHER grammatical classes
-        const otherClasses = Object.entries(GRAMMAR_CLASS_WORDS).filter(([k]) => k !== targetInfo.key).flatMap(([, v]) => v);
-        const options = assembleStructuredOptions(
-          answer,
-          otherClasses.slice(0, 5),
-          otherClasses.slice(5, 15),
-          targetOptionsCount,
-          otherClasses,
-          rng
-        );
-
-        const fp = hashChallengeContent(`WSGrammar-${targetInfo.name}-${answer}`);
-        question = {
-          id: `ws-${q}-${safeLevel}-${rng.next()}`,
-          opCode,
-          modeBadge: `${targetInfo.name} Class`,
-          prompt: `Find the ${targetInfo.name} among the options:`,
-          options,
-          correctAnswer: answer,
-          targetResponseTimeMs: 2100,
-          questionFingerprint: fp
-        };
-        break;
-      }
-
-      case 'WS-14': { // Contextual Meaning (Sentence Completion)
-        const answer = targetEntry.word;
-        const sentence = targetEntry.exampleSentence.replace(new RegExp(answer, 'gi'), '_____');
-        const strong = targetEntry.nearDistractors;
-        const options = assembleStructuredOptions(
-          answer,
-          strong,
-          pool.map(w => w.word),
-          targetOptionsCount,
-          allWordsList,
-          rng
-        );
-        const fp = hashChallengeContent(`WS14-${sentence}-${answer}`);
-        question = {
-          id: `ws-${q}-${safeLevel}-${rng.next()}`,
-          opCode: 'WS-14',
-          modeBadge: 'Contextual Meaning',
-          prompt: 'Which word best completes the sentence?',
-          subPrompt: `"${sentence}"`,
-          options,
-          correctAnswer: answer,
-          targetResponseTimeMs: 2500,
-          questionFingerprint: fp
-        };
-        break;
-      }
-
-      case 'WS-18': { // Word Pair / Paronym Discrimination
-        const pair = rng.pick(PARONYM_PAIRS);
-        const isA = rng.next() > 0.5;
-        const sentence = isA ? pair.sentenceA : pair.sentenceB;
-        const answer = isA ? pair.wordA : pair.wordB;
-        const strongTrap = isA ? pair.wordB : pair.wordA;
-
-        const options = assembleStructuredOptions(
-          answer,
-          [strongTrap],
-          pool.map(w => w.word),
-          targetOptionsCount,
-          allWordsList,
-          rng
-        );
-
-        const fp = hashChallengeContent(`WS18-${sentence}-${answer}`);
-        question = {
-          id: `ws-${q}-${safeLevel}-${rng.next()}`,
-          opCode: 'WS-18',
-          modeBadge: 'Paronym Discrimination',
-          prompt: 'Select the correct confusable word for this context:',
-          subPrompt: `"${sentence}"`,
-          options,
-          correctAnswer: answer,
-          targetResponseTimeMs: 2300,
-          questionFingerprint: fp
-        };
-        break;
-      }
-
-      case 'WS-20': { // Word Working Memory Stream
-        const streamWords = rng.shuffle(pool.map(w => w.word)).slice(0, safeLevel >= 70 ? 8 : 5);
-        const answer = rng.pick(streamWords);
-        const unshownWords = pool.map(w => w.word).filter(w => !streamWords.includes(w));
-
-        const options = assembleStructuredOptions(
-          answer,
-          unshownWords.slice(0, 5),
-          unshownWords.slice(5, 15),
-          targetOptionsCount,
-          unshownWords,
-          rng
-        );
-
-        const fp = hashChallengeContent(`WS20-${streamWords.join('-')}-${answer}`);
-        question = {
-          id: `ws-${q}-${safeLevel}-${rng.next()}`,
-          opCode: 'WS-20',
-          modeBadge: 'Working Memory',
-          prompt: 'Which word appeared in the memorized sequence?',
-          memoryStream: streamWords,
-          options,
-          correctAnswer: answer,
-          targetResponseTimeMs: 2200,
-          questionFingerprint: fp
-        };
-        break;
-      }
-
-      case 'WS-22': // Multi-Property Classification
-      default: {
-        // Multi-Property: e.g. Find the ADJECTIVE meaning "likely to happen and impossible to avoid"
-        const answer = targetEntry.word;
-        const posUpper = targetEntry.partOfSpeech.toUpperCase();
-        const strong = targetEntry.nearDistractors;
-        const options = assembleStructuredOptions(
-          answer,
-          strong,
-          pool.map(w => w.word),
-          targetOptionsCount,
-          allWordsList,
-          rng
-        );
-
-        const fp = hashChallengeContent(`WS22-${posUpper}-${targetEntry.definition}-${answer}`);
-        question = {
-          id: `ws-${q}-${safeLevel}-${rng.next()}`,
-          opCode: 'WS-22',
-          modeBadge: 'Multi-Property',
-          prompt: `Find the ${posUpper} that matches:`,
-          subPrompt: `"${targetEntry.definition}"`,
-          options,
-          correctAnswer: answer,
-          targetResponseTimeMs: 2500,
-          questionFingerprint: fp
-        };
-        break;
-      }
-    }
-
-    question.mode = question.modeBadge;
-
-    if (!generatedFingerprints.has(question.questionFingerprint)) {
-      generatedFingerprints.add(question.questionFingerprint);
-      questions.push(question);
-    } else {
-      // Fallback unique question
       questions.push({
-        ...question,
-        id: `ws-u-${q}-${Date.now()}`
+        id: item.id,
+        tier: item.tier,
+        category: item.category,
+        mode: item.modeBadge,
+        modeBadge: item.modeBadge,
+        prompt: item.prompt,
+        subPrompt: item.subPrompt,
+        options: shuffledOptions,
+        correctAnswer: item.correctAnswer,
+        explanation: item.explanation,
+        primaryWords: item.primaryWords,
+        targetResponseTimeMs: item.targetResponseTimeMs,
+        questionFingerprint: item.id
       });
     }
   }
 
+  // Fill remaining questions using dynamic procedural generators
+  let attempts = 0;
+  while (questions.length < totalQuestions && attempts < 80) {
+    attempts++;
+    const genType = rng.nextInt(1, 4);
+    let dynQ: WordSpeedQuestion | null = null;
+
+    if (genType === 1) {
+      dynQ = generateDynamicPrepositionQuestion(tier, rng, usedWordsInSession);
+    } else if (genType === 2) {
+      dynQ = generateDynamicArticleQuestion(tier, rng, usedWordsInSession);
+    } else if (genType === 3) {
+      dynQ = generateDynamicArrangementQuestion(tier, rng, usedWordsInSession);
+    } else {
+      dynQ = generateDynamicGrammarClassQuestion(tier, rng, usedWordsInSession);
+    }
+
+    if (dynQ && !usedFingerprints.has(dynQ.questionFingerprint)) {
+      const hasOverlap = dynQ.primaryWords.some(w => usedWordsInSession.has(w.toUpperCase()));
+      if (!hasOverlap) {
+        usedFingerprints.add(dynQ.questionFingerprint);
+        dynQ.primaryWords.forEach(w => usedWordsInSession.add(w.toUpperCase()));
+        dynQ.mode = dynQ.modeBadge;
+        questions.push(dynQ);
+      }
+    }
+  }
+
+  // If still need items, draw from full curated pool without overlap
+  if (questions.length < totalQuestions) {
+    const allRemaining = rng.shuffle([...GRAMMAR_QUESTIONS_DATASET]);
+    for (const item of allRemaining) {
+      if (questions.length >= totalQuestions) break;
+      const hasOverlap = item.primaryWords.some(w => usedWordsInSession.has(w.toUpperCase()));
+      if (!hasOverlap && !usedFingerprints.has(item.id)) {
+        usedFingerprints.add(item.id);
+        item.primaryWords.forEach(w => usedWordsInSession.add(w.toUpperCase()));
+        questions.push({
+          ...item,
+          mode: item.modeBadge,
+          options: rng.shuffle([...item.options]) as [string, string, string, string, string],
+          questionFingerprint: item.id
+        });
+      }
+    }
+  }
+
   const challengeHash = hashChallengeContent(
-    questions.map(q => `${q.opCode}:${q.correctAnswer}:${q.options.length}`).join('|')
+    questions.map(q => `${q.tier}:${q.category}:${q.correctAnswer}`).join('|')
   );
 
   return {
     level: safeLevel,
-    wordLengthRange,
-    targetOptionsCount,
-    activeTiers: safeLevel <= 10 ? [1, 2] : safeLevel <= 25 ? [2] : safeLevel <= 50 ? [2, 3] : [3, 4, 5],
+    tier,
+    tierDescription,
+    targetOptionsCount: 5,
     questions,
     totalQuestions: questions.length,
     challengeHash

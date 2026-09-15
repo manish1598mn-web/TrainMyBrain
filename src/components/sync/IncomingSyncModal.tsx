@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Smartphone, Check, X, ShieldAlert, ArrowRight, Trophy, Flame, Brain } from 'lucide-react';
 import { ProgressData } from '../../lib/storage/progressStorage';
 import { TransferSummary, applyDeviceSync } from '../../lib/storage/backupSync';
@@ -21,11 +21,11 @@ export const IncomingSyncModal: React.FC<IncomingSyncModalProps> = ({ isOpen, da
   };
 
   const gameNames: Record<string, string> = {
-    wordspeed: '🔤 Word Speed',
-    anzan: '⚡ Pro Calculations',
-    boggle: '🎲 Boggle',
-    sudoku: '🧩 Sudoku Reflex',
-    zebra: '🕵️ Reasoning Puzzles'
+    wordspeed: '🔤Word Speed',
+    anzan: '⚡Pro Calculations',
+Boggle: '🎲Boggle',
+    sudoku: '🧩Sudoku Reflex',
+    zebra: '🕵️Reasoning Puzzles'
   };
 
   return (

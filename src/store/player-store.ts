@@ -232,7 +232,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => {
         overallMindLevel: state.overallMindLevel,
         soundEnabled: true,
         hapticEnabled: true,
-        theme: 'light'
+        theme: 'dark'
       });
 
       const totalSec = Math.floor(newTime / 1000);
@@ -350,7 +350,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => {
         overallMindLevel: state.overallMindLevel,
         soundEnabled: true,
         hapticEnabled: true,
-        theme: 'light'
+        theme: 'dark'
       });
 
       return {
@@ -438,7 +438,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => {
         overallMindLevel: current.overallMindLevel,
         soundEnabled: true,
         hapticEnabled: true,
-        theme: 'light'
+        theme: 'dark'
       });
     },
 
@@ -466,7 +466,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => {
         overallMindLevel: lvl,
         soundEnabled: true,
         hapticEnabled: true,
-        theme: 'light'
+        theme: 'dark'
       });
     },
 
@@ -494,7 +494,7 @@ export const usePlayerStore = create<PlayerState>((set, get) => {
         overallMindLevel: current.overallMindLevel,
         soundEnabled: true,
         hapticEnabled: true,
-        theme: 'light'
+        theme: 'dark'
       });
     },
 

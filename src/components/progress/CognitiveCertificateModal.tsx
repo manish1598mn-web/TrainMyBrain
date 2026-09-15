@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+﻿import React, { useRef, useEffect, useState } from 'react';
 import { X, Download, Sparkles, Award, ShieldCheck, CheckCircle2, Share2 } from 'lucide-react';
 import { usePlayerStore } from '../../store/player-store';
 import { useProgressStore } from '../../store/progress-store';
@@ -123,23 +123,24 @@ export const CognitiveCertificateModal: React.FC<CognitiveCertificateModalProps>
       const colW = matrixW / 5;
       domains.forEach((d, i) => {
         const cx = matrixX + colW * i + colW / 2;
-        const g = games[d.key] || { level: 1, bestScore: 0, accuracy: 90 };
+        const g = games[d.key];
+        const isPlayed = Boolean(g && (g.gamesPlayed > 0 || g.bestScore > 0));
 
         ctx.fillStyle = '#94A3B8';
         ctx.font = 'bold 11px "JetBrains Mono", monospace';
-        ctx.fillText(`${d.icon} ${d.label.toUpperCase()}`, cx, matrixY + 45);
+        ctx.fillText(`${d.label.toUpperCase()}`, cx, matrixY + 45);
 
         ctx.fillStyle = '#FFFFFF';
         ctx.font = '800 24px "JetBrains Mono", monospace';
-        ctx.fillText(`Lvl ${g.level}`, cx, matrixY + 85);
+        ctx.fillText(isPlayed && g ? `Lvl ${g.level}` : 'Unranked', cx, matrixY + 85);
 
-        ctx.fillStyle = '#10B981';
+        ctx.fillStyle = isPlayed ? '#10B981' : '#64748B';
         ctx.font = '600 12px "JetBrains Mono", monospace';
-        ctx.fillText(`Score: ${g.bestScore || 100}`, cx, matrixY + 120);
+        ctx.fillText(isPlayed && g ? `Score: ${g.bestScore}` : 'Score: 0', cx, matrixY + 120);
 
         ctx.fillStyle = '#64748B';
         ctx.font = '500 11px "Plus Jakarta Sans", sans-serif';
-        ctx.fillText(`Acc: ${g.averageAccuracy ? Math.round(g.averageAccuracy) : 95}%`, cx, matrixY + 145);
+        ctx.fillText(isPlayed && g && g.averageAccuracy > 0 ? `Acc: ${Math.round(g.averageAccuracy)}%` : 'Acc: Awaiting', cx, matrixY + 145);
 
         // Divider
         if (i < 4) {

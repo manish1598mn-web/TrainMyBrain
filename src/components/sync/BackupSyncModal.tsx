@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef } from 'react';
 import { X, Download, Upload, Smartphone, Share2, Check, Copy, AlertCircle, ShieldCheck, RefreshCw, FileText, Swords, QrCode } from 'lucide-react';
 import { exportProgressToJson, downloadBackupFile, importProgressFromJson, generateDeviceTransferUrl, decodeDeviceTransferPayload, applyDeviceSync } from '../../lib/storage/backupSync';
 import { useProgressStore } from '../../store/progress-store';
@@ -330,11 +330,11 @@ export const BackupSyncModal: React.FC<BackupSyncModalProps> = ({ isOpen, onClos
                 <span className="text-xs font-mono font-bold uppercase text-slate-400">Choose Game to Duel:</span>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {[
-                    { id: 'wordspeed' as GameId, name: '🔤 Word Speed', level: games.wordspeed.level },
-                    { id: 'anzan' as GameId, name: '⚡ Pro Calculations', level: games.anzan.level },
-                    { id: 'boggle' as GameId, name: '🎲 Boggle Matrix', level: games.boggle.level },
-                    { id: 'sudoku' as GameId, name: '🧩 Sudoku Reflex', level: games.sudoku.level },
-                    { id: 'zebra' as GameId, name: '🕵️ Reasoning Puzzles', level: games.zebra.level }
+                    { id: 'wordspeed' as GameId, name: '🔤Word Speed', level: games.wordspeed.level },
+                    { id: 'anzan' as GameId, name: '⚡Pro Calculations', level: games.anzan.level },
+                    { id: 'boggle' as GameId, name: '🎲Boggle Matrix', level: games.boggle.level },
+                    { id: 'sudoku' as GameId, name: '🧩Sudoku Reflex', level: games.sudoku.level },
+                    { id: 'zebra' as GameId, name: '🕵️Reasoning Puzzles', level: games.zebra.level }
                   ].map(g => (
                     <button
                       key={g.id}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { GameId } from '../../engine/game-engine/types';
 import { useProgressStore } from '../../store/progress-store';
 import { soundManager } from '../../lib/sound';
@@ -69,8 +69,8 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       gameId: 'anzan',
       gameName: 'Pro Calculations',
       skillName: 'Mental Arithmetic',
-      nature: 'Sequential Flash Buffer',
-      anatomicalLobe: 'Frontal Lobe',
+      nature: 'Speed Calculation',
+      anatomicalLobe: 'Mental Math',
       colorName: 'Amber',
       examApplication: 'Quant Simplification & DI Approximations',
       accentGradient: 'from-amber-500 to-orange-500',
@@ -80,7 +80,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       glowColor: 'rgba(245, 158, 11, 0.45)',
       icon: Zap,
       hotspotStyle: { top: '30%', left: '26%' },
-      badgeText: 'Frontal Lobe • +48, -19',
+      badgeText: 'Speed Math \u00B7 Fast Calc',
       natureDetails: 'Maintains rapid arithmetic calculations directly in working memory without scratch paper.',
       isFeatured: true
     },
@@ -89,8 +89,8 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       gameId: 'boggle',
       gameName: 'Boggle',
       skillName: 'Visual Lexical Search',
-      nature: '4x4 & 5x5 Adjacent Word Paths',
-      anatomicalLobe: 'Occipital-Temporal Cortex',
+      nature: 'Word Formation',
+      anatomicalLobe: 'Word Search',
       colorName: 'Rose',
       examApplication: 'Lexical Retrieval, Anagram Recognition & Spatial Scanning',
       accentGradient: 'from-rose-500 to-pink-500',
@@ -100,7 +100,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       glowColor: 'rgba(244, 63, 94, 0.45)',
       icon: Sparkles,
       hotspotStyle: { top: '46%', left: '48%' },
-      badgeText: 'Prefrontal Cortex • Lexical Flow',
+      badgeText: 'Word Search \u00B7 7x7 Grid',
       natureDetails: 'High-speed 2D grid letter pathing, anagram discovery, and fast lexical retrieval under pressure.'
     },
     {
@@ -108,8 +108,8 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       gameId: 'zebra',
       gameName: 'Puzzles',
       skillName: 'Complex Reasoning',
-      nature: 'Relational Positional Logic',
-      anatomicalLobe: 'Temporal Lobe',
+      nature: 'Positional Logic',
+      anatomicalLobe: 'Logical Puzzles',
       colorName: 'Emerald',
       examApplication: 'Circular/Linear Seating & Blood Relations',
       accentGradient: 'from-emerald-500 to-teal-500',
@@ -119,7 +119,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       glowColor: 'rgba(16, 185, 129, 0.45)',
       icon: Layers,
       hotspotStyle: { top: '56%', left: '38%' },
-      badgeText: 'Temporal Lobe • Positional Grid',
+      badgeText: 'Logical Puzzles \u00B7 Deduction',
       natureDetails: 'Constructs relational condition maps from multi-variable logical clues.'
     },
     {
@@ -127,8 +127,8 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       gameId: 'sudoku',
       gameName: 'Sudoku Reflex',
       skillName: 'Constraint Logic',
-      nature: '9x9 Candidate Elimination',
-      anatomicalLobe: 'Parietal Lobe',
+      nature: 'Grid Deduction',
+      anatomicalLobe: 'Sudoku Logic',
       colorName: 'Violet',
       examApplication: 'Box, Floor & Day-Schedule Puzzles',
       accentGradient: 'from-purple-500 to-indigo-500',
@@ -138,7 +138,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       glowColor: 'rgba(168, 85, 247, 0.45)',
       icon: Brain,
       hotspotStyle: { top: '26%', left: '62%' },
-      badgeText: 'Parietal Lobe • Row/Col 1-9',
+      badgeText: 'Sudoku \u00B7 Elimination',
       natureDetails: 'Sub-second constraint checking and elimination of invalid logical candidates.'
     },
     {
@@ -146,8 +146,8 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       gameId: 'wordspeed',
       gameName: 'Word Speed',
       skillName: 'Verbal Processing Speed',
-      nature: 'Recognition & Discrimination',
-      anatomicalLobe: 'Language Cortex',
+      nature: 'Grammar & Vocabulary',
+      anatomicalLobe: 'Verbal Speed',
       colorName: 'Cyan',
       examApplication: 'English Reading, Cloze Speed & Verbal Classification',
       accentGradient: 'from-sky-500 to-cyan-500',
@@ -157,7 +157,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       glowColor: 'rgba(14, 165, 233, 0.45)',
       icon: Eye,
       hotspotStyle: { top: '48%', left: '80%' },
-      badgeText: 'Language Cortex • Rapid Recognition',
+      badgeText: 'Word Speed \u00B7 English Grammar',
       natureDetails: 'Fast verbal recognition, orthographic discrimination, and rapid semantic classification.'
     },
     {
@@ -165,8 +165,8 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       gameId: 'mindmix',
       gameName: 'Mind Mix',
       skillName: 'Mental Switching',
-      nature: '5-Discipline Rapid Shifts',
-      anatomicalLobe: 'Executive Network',
+      nature: 'Rapid Context Shifts',
+      anatomicalLobe: 'Multi-Discipline',
       colorName: 'Indigo',
       examApplication: 'Sectional Agility Between Quant & Reasoning',
       accentGradient: 'from-indigo-600 to-violet-600',
@@ -176,7 +176,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
       glowColor: 'rgba(99, 102, 241, 0.45)',
       icon: Shuffle,
       hotspotStyle: { top: '78%', left: '60%' },
-      badgeText: 'Executive Network • 5-Game Sprint',
+      badgeText: 'Mind Mix \u00B7 5-Game Sprint',
       natureDetails: 'Trains rapid context switching across all 5 faculties without cognitive fatigue.'
     }
   ];
@@ -202,9 +202,10 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
     const isSelected = selectedRegionId === region.id;
     const Icon = region.icon;
     const isMindMix = region.gameId === 'mindmix';
-    const progress = !isMindMix ? (games[region.gameId as GameId] || { level: 1, mastery: 25, bestScore: 0 }) : null;
+    const progress = !isMindMix ? (games[region.gameId as GameId] || { level: 1, mastery: 0, bestScore: 0, gamesPlayed: 0 }) : null;
+    const isPlayed = !isMindMix && progress && (progress.gamesPlayed > 0 || progress.bestScore > 0);
     const chosenLevel = !isMindMix ? (selectedLevels[region.gameId as GameId] ?? (progress?.level || 1)) : mindMixLevel;
-    const masteryPercent = !isMindMix ? (progress?.mastery ?? 25) : Math.min(100, Math.round((mindMixLevel / 99) * 100));
+    const masteryPercent = !isMindMix ? (isPlayed ? (progress?.mastery ?? 0) : 0) : Math.min(100, Math.round((mindMixLevel / 99) * 100));
 
     return (
       <div
@@ -213,7 +214,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
           soundManager.playTap();
           setSelectedRegionId(region.id);
         }}
-        className={`p-3.5 rounded-2xl border transition-all cursor-pointer text-left flex flex-col justify-between ${
+        className={`p-4 rounded-2xl border transition-all duration-200 card-focus-hover cursor-pointer text-left flex flex-col justify-between shadow-xs ${
           isSelected
             ? `bg-white dark:bg-slate-800/95 ${region.accentBorder} shadow-lg ring-1 ring-slate-400/20 scale-[1.02]`
             : 'bg-slate-50/90 dark:bg-slate-800/50 border-slate-200/80 dark:border-slate-700/60 hover:bg-white dark:hover:bg-slate-800/80 hover:border-slate-300'
@@ -236,34 +237,34 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
               </div>
             </div>
 
-            {/* Level Stepper (for 5 games) / Derived Level (for Mind Mix) */}
+            {/* High-Contrast Luminous Level Stepper (< L1 >) - Increased size & dark mode visibility */}
             {!isMindMix ? (
               <div 
                 onClick={(e) => e.stopPropagation()}
-                className="flex items-center gap-1 px-1.5 py-0.5 rounded-lg bg-slate-100 dark:bg-slate-750 border border-slate-200/70 dark:border-slate-700 shadow-xs"
+                className="flex items-center gap-1.5 px-2.5 py-1 sm:px-3 sm:py-1 rounded-xl bg-teal-50 dark:bg-teal-950/80 border-2 border-teal-300 dark:border-teal-500/70 shadow-sm shadow-teal-500/15"
               >
                 <button
                   onClick={(e) => handleAdjustLevel(region.gameId as GameId, -1, e)}
                   disabled={chosenLevel <= 1}
                   title="Previous Level"
-                  className="p-0.5 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 transition-colors"
+                  className="p-1 rounded-md text-teal-700 hover:text-teal-950 dark:text-teal-300 dark:hover:text-white hover:bg-teal-200/50 dark:hover:bg-teal-800/60 disabled:opacity-25 transition-all cursor-pointer"
                 >
-                  <ChevronLeft className="w-3 h-3" />
+                  <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
                 </button>
-                <span className="text-[11px] font-black text-slate-900 dark:text-white font-mono px-1">
+                <span className="text-xs sm:text-sm font-black text-teal-800 dark:text-teal-200 font-mono px-1.5 tracking-tight">
                   L{chosenLevel}
                 </span>
                 <button
                   onClick={(e) => handleAdjustLevel(region.gameId as GameId, 1, e)}
                   disabled={chosenLevel >= 99}
                   title="Next Level"
-                  className="p-0.5 rounded text-slate-400 hover:text-slate-900 dark:hover:text-white disabled:opacity-30 transition-colors"
+                  className="p-1 rounded-md text-teal-700 hover:text-teal-950 dark:text-teal-300 dark:hover:text-white hover:bg-teal-200/50 dark:hover:bg-teal-800/60 disabled:opacity-25 transition-all cursor-pointer"
                 >
-                  <ChevronRight className="w-3 h-3" />
+                  <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
                 </button>
               </div>
             ) : (
-              <span className="px-2 py-0.5 rounded-lg bg-indigo-500/20 text-indigo-400 font-mono text-[10px] font-bold">
+              <span className="px-3 py-1 rounded-xl bg-indigo-50 dark:bg-indigo-950/80 border-2 border-indigo-300 dark:border-indigo-500/70 text-indigo-700 dark:text-indigo-300 font-mono text-xs sm:text-sm font-black shadow-sm">
                 Lv {mindMixLevel}
               </span>
             )}
@@ -271,14 +272,14 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
 
           {/* Skill & Nature Description */}
           <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-snug font-medium mb-2.5">
-            {region.skillName} • <span className="text-slate-400 font-normal">{region.nature}</span>
+            {region.skillName} \u00B7 <span className="text-slate-400 font-normal">{region.nature}</span>
           </p>
 
           {/* Mini Mastery Bar */}
           <div className="mb-2.5">
             <div className="flex justify-between text-[9px] font-semibold text-slate-400 uppercase mb-1 font-mono">
-              <span>Mastery: {masteryPercent}%</span>
-              <span>{!isMindMix && progress && progress.bestScore > 0 ? `${progress.bestScore} pts` : 'Ready'}</span>
+              <span>Mastery: {isPlayed ? `${masteryPercent}%` : '0% \u00B7 Unplayed'}</span>
+              <span>{!isMindMix && progress && progress.bestScore > 0 ? `${progress.bestScore} pts` : 'Lvl 1 Ready'}</span>
             </div>
             <div className="h-1 w-full rounded-full bg-slate-200 dark:bg-slate-700/80 overflow-hidden">
               <div
@@ -297,13 +298,13 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
 
           <button
             onClick={(e) => handleLaunchGameCard(region, e)}
-            className={`px-2.5 py-1 rounded-lg font-bold text-[10px] font-mono shadow-xs active:scale-95 transition-all flex items-center gap-1 shrink-0 ${
+            className={`btn-tactile px-4 py-2 sm:px-4.5 sm:py-2 rounded-xl font-black text-xs sm:text-sm font-mono shadow-md shadow-teal-500/20 active:scale-95 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer ${
               isSelected
-                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950'
-                : 'bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-slate-200 hover:bg-slate-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-950'
+                ? 'bg-gradient-to-r from-teal-600 via-teal-500 to-indigo-600 hover:from-teal-500 hover:to-indigo-500 text-white dark:from-teal-400 dark:via-teal-300 dark:to-indigo-400 dark:text-slate-950 shadow-lg shadow-teal-500/30 ring-2 ring-teal-400/40'
+                : 'bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-950 shadow-sm'
             }`}
           >
-            <Play className="w-2.5 h-2.5 fill-current" />
+            <Play className="w-3.5 h-3.5 fill-current" />
             <span>Play L{chosenLevel}</span>
           </button>
         </div>
@@ -322,14 +323,12 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-xs font-semibold mb-2">
             <Sparkles className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-            Level 1 → Level 99+ Adaptive Progression
+            Level 1 \u2192 Level 99+ Adaptive Progression
           </div>
           <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Train with 5 Brain Games & Cognitive Faculties
           </h2>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1 font-normal">
-            Sharpen working memory, calculation speed, and logical deduction.
-          </p>
+          
         </div>
       </div>
 
@@ -338,19 +337,19 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
         <div className="mb-6 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/5 border-2 border-amber-400/40 dark:border-amber-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm hover:border-amber-400 transition-all relative z-10">
           <div className="flex items-center gap-3.5">
             <div className="w-12 h-12 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-xl shadow-md shrink-0">
-              🏋️
+              <Target className="w-6 h-6 text-slate-950" />
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-base sm:text-lg font-black text-slate-900 dark:text-white">
-                  Training — Build Fundamentals & Speed
+                  Training \u00B7 Build Fundamentals & Speed
                 </h3>
                 <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-700 dark:text-amber-300 font-mono font-bold text-[10px] uppercase">
                   10 Foundation Levels
                 </span>
               </div>
               <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">
-                New to brain training? Build speed and core reflexes across all 5 games before entering Main Level 1.
+                Build core speed and accuracy across all 5 disciplines before entering Level 1.
               </p>
             </div>
           </div>
@@ -473,10 +472,10 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
               </div>
               <div>
                 <span className="text-[10px] uppercase font-bold text-slate-400 font-mono block">
-                  Faculty • {activeRegion.anatomicalLobe}
+                  Discipline \u00B7 {activeRegion.anatomicalLobe}
                 </span>
                 <h4 className="text-sm font-bold text-slate-900 dark:text-white">
-                  {activeRegion.gameName} — {activeRegion.skillName}
+                  {activeRegion.gameName} \u00B7 {activeRegion.skillName}
                 </h4>
               </div>
             </div>
@@ -499,7 +498,7 @@ export const GameCardsSection: React.FC<GameCardsSectionProps> = ({
             {activeRegion.natureDetails}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500 font-mono">
-            <span>🎯 Primary Exam Transfer: <strong className="text-slate-800 dark:text-slate-200 font-medium">{activeRegion.examApplication}</strong></span>
+            <span className="flex items-center gap-1.5"><Target className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400 shrink-0" /><span>Primary Exam Transfer: <strong className="text-slate-800 dark:text-slate-200 font-medium">{activeRegion.examApplication}</strong></span></span>
           </div>
         </div>
 

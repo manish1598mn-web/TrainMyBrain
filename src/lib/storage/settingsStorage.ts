@@ -6,7 +6,7 @@ export interface SettingsData {
   soundPack: SoundPack;
   hapticEnabled: boolean;
   reducedMotion: boolean;
-  theme: 'light' | 'dark';
+  theme: 'dark' | 'dark';
 }
 
 const defaultSettings: SettingsData = {
@@ -14,7 +14,7 @@ const defaultSettings: SettingsData = {
   soundPack: 'zen',
   hapticEnabled: true,
   reducedMotion: false,
-  theme: 'light'
+  theme: 'dark'
 };
 
 export const settingsStorage = {

@@ -1,3 +1,4 @@
+import { VocabularyVaultModal } from './components/modals/VocabularyVaultModal';
 import React, { useState, useEffect } from 'react';
 import { GameId, GameResult } from './engine/game-engine/types';
 import { useProgressStore } from './store/progress-store';
@@ -90,6 +91,7 @@ export function App() {
   const [activeResult, setActiveResult] = useState<{ result: GameResult; leveledUp: boolean } | null>(null);
   const [profileModalOpen, setProfileModalOpen] = useState(false);
   const [settingsModalOpen, setSettingsModalOpen] = useState(false);
+  const [vocabularyModalOpen, setVocabularyModalOpen] = useState(false);
   const [shortcutsModalOpen, setShortcutsModalOpen] = useState(false);
   const [diagnosticsModalOpen, setDiagnosticsModalOpen] = useState(false);
   const [aiAdminModalOpen, setAiAdminModalOpen] = useState(false);
@@ -193,7 +195,9 @@ export function App() {
     if (activeResult) return;
 
     if (activeGameId === 'mindmix' || activeGameId === 'training') {
-      const fakeResult: GameResult = {
+      const perfScore = Math.round(data.accuracy * (data.accuracy >= 70 ? 0.95 : 0.7));
+      const computedSpeedScore = Math.min(100, Math.max(20, Math.round((25000 / Math.max(500, data.timeMs)) * 75)));
+      const realResult: GameResult = {
         gameId: 'anzan',
         level: activeGameLevel,
         score: data.score,
@@ -202,16 +206,16 @@ export function App() {
         mistakes: data.mistakes,
         completed: true,
         timestamp: Date.now(),
-        performanceScore: Math.round(data.accuracy * 0.9),
-        speedScore: 85,
-        difficultyScore: 75,
-        consistencyScore: 90,
+        performanceScore: perfScore,
+        speedScore: computedSpeedScore,
+        difficultyScore: Math.min(100, activeGameLevel * 10),
+        consistencyScore: data.accuracy,
         baselineImprovementPercent: 0,
-        speedAccuracySummary: activeGameId === 'training' ? 'Foundational Training Complete' : 'Adaptive Mental Switch Complete',
-        mastery: 80,
-        previousMastery: 75,
-        masteryDelta: 5,
-        insight: activeGameId === 'training' ? 'Great foundation built. Continue training toward Main Level 1.' : 'Excellent cognitive flexibility. Keep cycling disciplines to maintain fast mental switching speeds.'
+        speedAccuracySummary: activeGameId === 'training' ? 'Foundational Training Session' : 'Adaptive Mental Switch Session',
+        mastery: data.accuracy,
+        previousMastery: 0,
+        masteryDelta: 0,
+        insight: activeGameId === 'training' ? 'Foundation session complete. Accuracy takes priority over speed.' : 'Mental switch session complete.'
       };
       usePlayerStore.getState().recordTrainingActivity({
         timeMs: data.timeMs,
@@ -219,7 +223,7 @@ export function App() {
         isSuccessful: data.accuracy >= 70,
         isLevelUp: false
       });
-      setActiveResult({ result: fakeResult, leveledUp: false });
+      setActiveResult({ result: realResult, leveledUp: false });
       return;
     }
 
@@ -310,6 +314,7 @@ export function App() {
         onOpenProfile={() => setProfileModalOpen(true)}
         onOpenSettings={() => setSettingsModalOpen(true)}
         onOpenShortcuts={() => setShortcutsModalOpen(true)}
+        onOpenVocabulary={() => setVocabularyModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -485,10 +490,10 @@ export function App() {
         <footer className="mt-auto border-t border-slate-200/80 dark:border-slate-800/80 bg-white/50 dark:bg-[#0B0F17]/50 py-6 text-center text-xs text-slate-400 select-none">
           <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
             <p className="font-medium">
-              Train<span className="text-teal-600 dark:text-teal-400 font-bold">MyBrain</span> â€¢ Train Your Mind. Solve Faster.
+              Train<span className="text-teal-600 dark:text-teal-400 font-bold">MyBrain</span> · Train Your Mind. Solve Faster.
             </p>
             <p className="text-[11px] text-slate-400">
-              Anonymous client-side local training â€¢ Shareable challenge links
+              Anonymous client-side local training · Shareable challenge links
             </p>
           </div>
         </footer>
@@ -565,6 +570,12 @@ export function App() {
         onClose={() => setShortcutsModalOpen(false)}
       />
 
+      {/* Global Vocabulary Vault Word Bank Modal */}
+      <VocabularyVaultModal
+        isOpen={vocabularyModalOpen}
+        onClose={() => setVocabularyModalOpen(false)}
+      />
+
       {/* Global Settings Modal */}
       <SettingsModal
         isOpen={settingsModalOpen}
@@ -599,9 +610,9 @@ export function App() {
             level: games[gameId].level,
             seed: String(Date.now()),
             creatorName: 'Player',
-            creatorScore: games[gameId].bestScore || 100,
-            creatorAccuracy: 95,
-            creatorTimeMs: games[gameId].bestTimeMs || 25000,
+            creatorScore: games[gameId].bestScore || 0,
+            creatorAccuracy: games[gameId].averageAccuracy > 0 ? Math.round(games[gameId].averageAccuracy) : 100,
+            creatorTimeMs: games[gameId].bestTimeMs || 30000,
             createdAt: Date.now()
           });
         }}

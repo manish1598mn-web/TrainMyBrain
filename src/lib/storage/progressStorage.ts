@@ -10,7 +10,7 @@ const defaultProgress: ProgressData = {
     sudoku: {
       gameId: 'sudoku',
       level: 1,
-      mastery: 25,
+      mastery: 0,
       bestScore: 0,
       bestTimeMs: 0,
       averageTimeMs: 0,
@@ -29,7 +29,7 @@ const defaultProgress: ProgressData = {
     zebra: {
       gameId: 'zebra',
       level: 1,
-      mastery: 25,
+      mastery: 0,
       bestScore: 0,
       bestTimeMs: 0,
       averageTimeMs: 0,
@@ -48,7 +48,7 @@ const defaultProgress: ProgressData = {
     wordspeed: {
       gameId: 'wordspeed',
       level: 1,
-      mastery: 25,
+      mastery: 0,
       bestScore: 0,
       bestTimeMs: 0,
       averageTimeMs: 0,
@@ -67,7 +67,7 @@ const defaultProgress: ProgressData = {
     anzan: {
       gameId: 'anzan',
       level: 1,
-      mastery: 25,
+      mastery: 0,
       bestScore: 0,
       bestTimeMs: 0,
       averageTimeMs: 0,
@@ -86,7 +86,7 @@ const defaultProgress: ProgressData = {
     boggle: {
       gameId: 'boggle',
       level: 1,
-      mastery: 25,
+      mastery: 0,
       bestScore: 0,
       bestTimeMs: 0,
       averageTimeMs: 0,
@@ -134,7 +134,7 @@ export const progressStorage = {
         data.games[g] = {
           ...defaultProgress.games[g],
           ...data.games[g],
-          mastery: data.games[g].mastery ?? 25,
+          mastery: (data.games[g].gamesPlayed > 0) ? (data.games[g].mastery ?? 0) : 0,
           recentPerformances: data.games[g].recentPerformances || [],
           recentAccuracies: data.games[g].recentAccuracies || []
         };

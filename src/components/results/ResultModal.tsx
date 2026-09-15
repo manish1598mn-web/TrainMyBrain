@@ -85,7 +85,7 @@ export const ResultModal: React.FC<ResultModalProps> = ({
         {leveledUp ? (
           <div className="mb-3 inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-teal-50 dark:bg-teal-950/60 text-teal-700 dark:text-teal-300 font-bold text-xs uppercase tracking-wider animate-bounce" style={{ animationDuration: '2s' }}>
             <Sparkles className="w-4 h-4 fill-teal-500 text-teal-600" />
-            <span>🎉 LEVEL UP • Level {currentLevel} → Level {nextLevel}</span>
+            <span>LEVEL UP • Level {currentLevel} → Level {nextLevel}</span>
           </div>
         ) : (
           <div className="mb-3 inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-semibold text-xs">

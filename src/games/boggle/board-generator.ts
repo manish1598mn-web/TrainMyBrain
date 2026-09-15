@@ -1,15 +1,16 @@
 /**
  * Boggle Progressive Difficulty & Board Generation Engine
  * 
- * Grid Dimension Progression:
- * - Levels 1–10:  4x4, 4x5, 5x5, 6x5, 6x6
- * - Levels 11–25: 6x7 to 9x9
- * - Levels 26–50: 9x10 to 15x15
- * - Levels 51–99+: 15x16 to 25x25
- * - Level 99+:    25x25 (All constraints activated)
+ * Uniform 7x7 (49 dice) Grid Across All Levels.
+ * 
+ * Progressive Difficulty Progression:
+ * - Levels 1–10:  3 to 5 letter words, 4 to 6 target words
+ * - Levels 11–25: 5 to 7 letter words, 6 to 12 target words
+ * - Levels 26–50: 7 to 12 letter words, 12 to 20 target words
+ * - Levels 51–99+: 8 to 20 letter words, 15 to 25 target words
  * 
  * Timing:
- * - Exactly 10 seconds per target word building: Time = max(60, targetWords * 10)
+ * - Generous, brain-friendly timing: max(90s, targetWords * 15s)
  */
 
 import { SeededRandom, createSeededRandom } from '../../lib/seeded-random';
@@ -23,7 +24,7 @@ export interface BoggleCellCoord {
 export interface BoggleBoard {
   rows: number;
   cols: number;
-  size?: number;
+  size: number;
   grid: string[][];
   allValidWords: Map<string, BoggleCellCoord[]>;
   totalWordCount: number;
@@ -31,6 +32,11 @@ export interface BoggleBoard {
   timeAllowedSec: number;
   minWordLength: number;
   maxScore: number;
+  levelTier: {
+    minLetters: number;
+    maxLetters: number;
+    description: string;
+  };
 }
 
 export interface BoggleReflexTrailChallenge {
@@ -75,101 +81,111 @@ const VOWELS = new Set(['A', 'E', 'I', 'O', 'U']);
 const DIR_ROW = [-1, -1, -1, 0, 0, 1, 1, 1];
 const DIR_COL = [-1, 0, 1, -1, 1, -1, 0, 1];
 
+// Curated seed words for serpentine planting by tier
+const TIER_WORDS_5_7 = [
+  'STREAM', 'PLANET', 'GARDEN', 'FOREST', 'SPRING', 'SILVER', 'TRAVEL', 'NATURE',
+  'WONDER', 'BRIGHT', 'BRIDGE', 'CASTLE', 'FLOWER', 'GOLDEN', 'ISLAND', 'MEMORY',
+  'ORANGE', 'PURPLE', 'RIVER', 'SUNNY', 'VALLEY', 'WINTER', 'YELLOW', 'BALANCE',
+  'CRYSTAL', 'DOLPHIN', 'JOURNEY', 'LANTERN', 'MYSTERY', 'PENGUIN', 'THUNDER', 'VILLAGE'
+];
+
+const TIER_WORDS_7_12 = [
+  'BEAUTIFUL', 'CHALLENGE', 'EDUCATION', 'HAPPINESS', 'KNOWLEDGE', 'LANDSCAPE',
+  'MOUNTAIN', 'NOTEBOOK', 'ORCHESTRA', 'PYRAMID', 'RAINBOW', 'SCIENTIST',
+  'TELESCOPE', 'UMBRELLA', 'VACATION', 'WATERFALL', 'ADVENTURE', 'ASTRONOMY',
+  'DISCOVERY', 'FANTASTIC', 'GEOMETRY', 'HORIZON', 'IMAGINATION', 'LIGHTNING',
+  'NAVIGATOR', 'SYMPHONY', 'WONDERLAND', 'CELEBRATION', 'REMARKABLE', 'BRILLIANT'
+];
+
+const TIER_WORDS_8_PLUS = [
+  'CHALLENGE', 'EDUCATION', 'HAPPINESS', 'KNOWLEDGE', 'LANDSCAPE', 'ASTRONOMY',
+  'DISCOVERY', 'FANTASTIC', 'GEOMETRY', 'IMAGINATION', 'LIGHTNING', 'NAVIGATOR',
+  'REMARKABLE', 'SCIENTIST', 'SYMPHONY', 'TELESCOPE', 'WATERFALL', 'WONDERLAND',
+  'CELEBRATION', 'BRILLIANT', 'ADVENTURE', 'EXPERIMENT', 'INNOVATION', 'LEADERSHIP'
+];
+
 /**
- * Calculates exact grid dimensions according to the progressive difficulty algorithm:
- * - 1-10: 4x4, 4x5, 5x5, 6x5, 6x6
- * - 11-25: 6x7 to 9x9
- * - 25-50: 9x10 to 15x15
- * - 50-99+: 15x16 to 25x25
+ * Dimensions: Consistent 7x7 Grid across all levels
  */
-export function getBoggleDimensions(level: number): { rows: number; cols: number; label: string } {
-  if (level <= 10) {
-    if (level === 1) return { rows: 4, cols: 4, label: '4x4' };
-    if (level <= 3) return { rows: 4, cols: 5, label: '4x5' };
-    if (level <= 5) return { rows: 5, cols: 5, label: '5x5' };
-    if (level <= 7) return { rows: 6, cols: 5, label: '6x5' };
-    return { rows: 6, cols: 6, label: '6x6' };
-  }
-
-  if (level <= 25) {
-    if (level <= 13) return { rows: 6, cols: 7, label: '6x7' };
-    if (level <= 17) return { rows: 7, cols: 7, label: '7x7' };
-    if (level <= 21) return { rows: 8, cols: 8, label: '8x8' };
-    return { rows: 9, cols: 9, label: '9x9' };
-  }
-
-  if (level <= 50) {
-    if (level <= 29) return { rows: 9, cols: 10, label: '9x10' };
-    if (level <= 34) return { rows: 10, cols: 10, label: '10x10' };
-    if (level <= 39) return { rows: 11, cols: 11, label: '11x11' };
-    if (level <= 44) return { rows: 12, cols: 12, label: '12x12' };
-    if (level <= 48) return { rows: 14, cols: 14, label: '14x14' };
-    return { rows: 15, cols: 15, label: '15x15' };
-  }
-
-  // 51 to 99+
-  if (level <= 60) return { rows: 15, cols: 16, label: '15x16' };
-  if (level <= 70) return { rows: 18, cols: 18, label: '18x18' };
-  if (level <= 80) return { rows: 20, cols: 20, label: '20x20' };
-  if (level <= 90) return { rows: 22, cols: 22, label: '22x22' };
-  return { rows: 25, cols: 25, label: '25x25' };
+export function getBoggleDimensions(_level: number): { rows: number; cols: number; label: string } {
+  return { rows: 7, cols: 7, label: '7x7' };
 }
 
 /**
- * Calculates target words count to find for the level
+ * Calculates target words count to find for the level according to approved criteria:
+ * - Level 1–10: 4 to 6 words
+ * - Level 11–25: 6 to 12 words
+ * - Level 26–50: 12 to 20 words
+ * - Level 51–99+: 15 to 25 words
  */
 export function getBoggleTargetWordCount(level: number): number {
   if (level <= 10) {
-    // 4 to 8 words
-    return Math.round(4 + ((level - 1) / 9) * (8 - 4));
+    return Math.round(4 + ((level - 1) / 9) * (6 - 4));
   }
   if (level <= 25) {
-    // 8 to 14 words
-    return Math.round(8 + ((level - 11) / 14) * (14 - 8));
+    return Math.round(6 + ((level - 11) / 14) * (12 - 6));
   }
   if (level <= 50) {
-    // 14 to 20 words
-    return Math.round(14 + ((level - 26) / 24) * (20 - 14));
+    return Math.round(12 + ((level - 26) / 24) * (20 - 12));
   }
-  if (level <= 99) {
-    // 20 to 35 words
-    return Math.round(20 + ((level - 51) / 48) * (35 - 20));
-  }
-  return 35;
+  // Level 51 to 99+
+  return Math.min(25, Math.round(15 + ((level - 51) / 48) * (25 - 15)));
 }
 
 /**
- * Calculates time allowed: 10 seconds per target word (with 60s minimum comfortable baseline)
- */
-export function getBoggleTimeAllowedSec(level: number): number {
-  const targetWords = getBoggleTargetWordCount(level);
-  return Math.max(60, targetWords * 10);
-}
-
-/**
- * Calculates minimum required word length based on level
+ * Calculates minimum required word length based on level:
+ * - Level 1–10: 3 letters
+ * - Level 11–25: 5 letters
+ * - Level 26–50: 7 letters
+ * - Level 51–99+: 8 letters
  */
 export function getBoggleMinWordLength(level: number): number {
   if (level <= 10) return 3;
-  if (level <= 25) return 3;
-  if (level <= 50) return 4;
-  return 4;
+  if (level <= 25) return 5;
+  if (level <= 50) return 7;
+  return 8;
 }
 
 /**
- * High-Speed DFS Prefix Trie Solver for arbitrary rows x cols grids.
+ * Level tier metadata for UI indicators
  */
-export function solveBoggleBoard(grid: string[][], rows: number, cols: number, minLength: number = 3): Map<string, BoggleCellCoord[]> {
+export function getBoggleLevelTier(level: number): { minLetters: number; maxLetters: number; description: string } {
+  if (level <= 10) {
+    return { minLetters: 3, maxLetters: 5, description: '3–5 Letter Words' };
+  }
+  if (level <= 25) {
+    return { minLetters: 5, maxLetters: 7, description: '5–7 Letter Words' };
+  }
+  if (level <= 50) {
+    return { minLetters: 7, maxLetters: 12, description: '7–12 Letter Words' };
+  }
+  return { minLetters: 8, maxLetters: 20, description: '8–20 Letter Words' };
+}
+
+/**
+ * Calculates time allowed: Generous 15 seconds per target word (minimum 90s)
+ */
+export function getBoggleTimeAllowedSec(level: number): number {
+  const targetWords = getBoggleTargetWordCount(level);
+  return Math.max(90, targetWords * 15);
+}
+
+/**
+ * High-Speed DFS Prefix Trie Solver for 7x7 grid.
+ * Explores valid paths using Trie pruning with depth up to 14.
+ */
+export function solveBoggleBoard(grid: string[][], rows: number = 7, cols: number = 7, minLength: number = 3): Map<string, BoggleCellCoord[]> {
   const foundWords = new Map<string, BoggleCellCoord[]>();
   const visited: boolean[][] = Array(rows).fill(false).map(() => Array(cols).fill(false));
+  const maxSearchDepth = 14;
 
   function dfs(r: number, c: number, currentWord: string, currentPath: BoggleCellCoord[]) {
-    if (foundWords.size >= 120) return; // Early cut-off for large dense grids
+    if (foundWords.size >= 150) return; // Cut-off once ample words are found
 
     const char = grid[r][c];
     const newWord = currentWord + char;
 
-    // Prune invalid prefixes immediately in O(L) time
+    // Prune invalid prefixes immediately in O(L) time using Trie
     if (!boggleTrie.hasPrefix(newWord)) {
       return;
     }
@@ -182,7 +198,7 @@ export function solveBoggleBoard(grid: string[][], rows: number, cols: number, m
       }
     }
 
-    if (newWord.length >= 8) return; // Max search depth per branch
+    if (newWord.length >= maxSearchDepth) return;
 
     visited[r][c] = true;
 
@@ -201,116 +217,219 @@ export function solveBoggleBoard(grid: string[][], rows: number, cols: number, m
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
       dfs(r, c, '', []);
-      if (foundWords.size >= 100) break;
+      if (foundWords.size >= 120) break;
     }
-    if (foundWords.size >= 100) break;
+    if (foundWords.size >= 120) break;
   }
 
   return foundWords;
 }
 
 /**
- * Generates calibrated Boggle board matching exact level specifications
+ * Plants a word along a random self-avoiding path on the 7x7 grid.
+ * Returns true if planting was successful.
+ */
+function plantWordOnGrid(grid: (string | null)[][], word: string, rng: SeededRandom): boolean {
+  const rows = 7;
+  const cols = 7;
+  const wordLen = word.length;
+
+  // Try multiple random starting positions
+  for (let attempt = 0; attempt < 30; attempt++) {
+    const startR = rng.nextInt(0, rows - 1);
+    const startC = rng.nextInt(0, cols - 1);
+
+    // Check if start position is empty or matches first letter
+    if (grid[startR][startC] !== null && grid[startR][startC] !== word[0]) {
+      continue;
+    }
+
+    const path: BoggleCellCoord[] = [{ r: startR, c: startC }];
+    const visited = new Set<string>([`${startR},${startC}`]);
+
+    let currR = startR;
+    let currC = startC;
+    let pathFound = true;
+
+    for (let i = 1; i < wordLen; i++) {
+      const nextLetter = word[i];
+      // Gather valid adjacent unvisited or matching cells
+      const candidates: BoggleCellCoord[] = [];
+
+      for (let d = 0; d < 8; d++) {
+        const nr = currR + DIR_ROW[d];
+        const nc = currC + DIR_COL[d];
+        const key = `${nr},${nc}`;
+
+        if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && !visited.has(key)) {
+          if (grid[nr][nc] === null || grid[nr][nc] === nextLetter) {
+            candidates.push({ r: nr, c: nc });
+          }
+        }
+      }
+
+      if (candidates.length === 0) {
+        pathFound = false;
+        break;
+      }
+
+      const nextCell = rng.pick(candidates);
+      visited.add(`${nextCell.r},${nextCell.c}`);
+      path.push(nextCell);
+      currR = nextCell.r;
+      currC = nextCell.c;
+    }
+
+    if (pathFound && path.length === wordLen) {
+      // Commit word to grid
+      for (let i = 0; i < wordLen; i++) {
+        const { r, c } = path[i];
+        grid[r][c] = word[i];
+      }
+      return true;
+    }
+  }
+
+  return false;
+}
+
+/**
+ * Generates a calibrated 7x7 Boggle board matching exact level specifications
  */
 export function generateBoggleBoard(level: number = 1, customSeed?: string | number): BoggleBoard {
   const safeLevel = Math.max(1, Math.min(120, level));
   const seed = customSeed !== undefined ? `${customSeed}` : `${Date.now()}-${safeLevel}-${Math.random()}`;
   const rng: SeededRandom = createSeededRandom(seed);
 
-  const { rows, cols } = getBoggleDimensions(safeLevel);
+  const rows = 7;
+  const cols = 7;
+  const totalCells = 49;
+
   const targetWordCount = getBoggleTargetWordCount(safeLevel);
   const timeAllowedSec = getBoggleTimeAllowedSec(safeLevel);
   const minWordLength = getBoggleMinWordLength(safeLevel);
+  const levelTier = getBoggleLevelTier(safeLevel);
 
-  const totalCells = rows * cols;
   let attempts = 0;
 
-  while (attempts < 20) {
+  while (attempts < 25) {
     attempts++;
 
-    // Generate letters using dice distributions and frequency balancing
-    const letters: string[] = [];
-    const dicePool = [...CLASSIC_BOGGLE_DICE_16, ...CLASSIC_BOGGLE_DICE_16, ...CLASSIC_BOGGLE_DICE_16, ...CLASSIC_BOGGLE_DICE_16];
+    // Initialize 7x7 empty grid
+    const rawGrid: (string | null)[][] = Array(rows).fill(null).map(() => Array(cols).fill(null));
 
-    for (let i = 0; i < totalCells; i++) {
-      const die = dicePool[i % dicePool.length];
-      letters.push(rng.pick(die));
+    // For levels with higher minimum lengths, embed serpentine seed words to guarantee valid paths
+    if (minWordLength >= 5) {
+      const pool = minWordLength >= 8 
+        ? TIER_WORDS_8_PLUS 
+        : minWordLength >= 7 
+        ? TIER_WORDS_7_12 
+        : TIER_WORDS_5_7;
+
+      const wordsToPlant = rng.nextInt(3, 6);
+      const shuffled = [...pool].sort(() => rng.next() - 0.5);
+
+      for (let w = 0; w < Math.min(wordsToPlant, shuffled.length); w++) {
+        plantWordOnGrid(rawGrid, shuffled[w], rng);
+      }
     }
 
-    // Convert into 2D grid
-    const grid: string[][] = [];
+    // Fill remaining cells using classic boggle dice distribution
+    const dicePool = [
+      ...CLASSIC_BOGGLE_DICE_16, 
+      ...CLASSIC_BOGGLE_DICE_16, 
+      ...CLASSIC_BOGGLE_DICE_16, 
+      ...CLASSIC_BOGGLE_DICE_16
+    ];
+
     let vowelCount = 0;
+    const finalGrid: string[][] = [];
 
     for (let r = 0; r < rows; r++) {
       const row: string[] = [];
       for (let c = 0; c < cols; c++) {
-        const letter = letters[r * cols + c];
+        let letter = rawGrid[r][c];
+        if (!letter) {
+          const die = dicePool[(r * cols + c) % dicePool.length];
+          letter = rng.pick(die);
+        }
         if (VOWELS.has(letter)) vowelCount++;
         row.push(letter);
       }
-      grid.push(row);
+      finalGrid.push(row);
     }
 
-    // Guarantee minimum vowel ratio (>= 20% vowels)
-    const minVowels = Math.max(3, Math.floor(totalCells * 0.20));
+    // Guarantee healthy vowel ratio (at least 25% vowels = ~12 vowels on 7x7)
+    const minVowels = Math.floor(totalCells * 0.25);
     if (vowelCount < minVowels) {
       const vowelList = ['A', 'E', 'I', 'O', 'U'];
-      for (let i = 0; i < minVowels - vowelCount; i++) {
-        const rr = i % rows;
-        const cc = (i * 2) % cols;
-        grid[rr][cc] = vowelList[i % vowelList.length];
+      let added = 0;
+      for (let r = 0; r < rows && added < minVowels - vowelCount; r++) {
+        for (let c = 0; c < cols && added < minVowels - vowelCount; c++) {
+          if (!VOWELS.has(finalGrid[r][c]) && rawGrid[r][c] === null) {
+            finalGrid[r][c] = rng.pick(vowelList);
+            added++;
+          }
+        }
       }
     }
 
-    const allValidWords = solveBoggleBoard(grid, rows, cols, minWordLength);
+    // Solve the generated grid
+    const allValidWords = solveBoggleBoard(finalGrid, rows, cols, minWordLength);
 
-    if (allValidWords.size >= Math.max(8, targetWordCount)) {
+    // Verify sufficient valid words exist
+    if (allValidWords.size >= Math.max(targetWordCount, 6)) {
       let maxScore = 0;
       allValidWords.forEach((_, word) => {
         const len = word.length;
-        maxScore += len === 3 ? 1 : len === 4 ? 2 : len === 5 ? 4 : len === 6 ? 6 : 10;
+        maxScore += len === 3 ? 1 : len === 4 ? 2 : len === 5 ? 4 : len === 6 ? 6 : len === 7 ? 9 : 15;
       });
 
       return {
         rows,
         cols,
-        size: rows,
-        grid,
+        size: 7,
+        grid: finalGrid,
         allValidWords,
         totalWordCount: allValidWords.size,
         targetWordCount,
         timeAllowedSec,
         minWordLength,
-        maxScore
+        maxScore,
+        levelTier
       };
     }
   }
 
-  // Fallback guaranteed board
+  // Fallback 7x7 guaranteed board
   const fallbackGrid: string[][] = [
-    ['T', 'R', 'A', 'I'],
-    ['N', 'E', 'P', 'N'],
-    ['B', 'A', 'L', 'S'],
-    ['O', 'A', 'N', 'T']
+    ['T', 'R', 'A', 'I', 'N', 'E', 'R'],
+    ['P', 'L', 'A', 'N', 'E', 'T', 'S'],
+    ['S', 'P', 'R', 'I', 'N', 'G', 'S'],
+    ['F', 'O', 'R', 'E', 'S', 'T', 'S'],
+    ['G', 'A', 'R', 'D', 'E', 'N', 'S'],
+    ['S', 'I', 'L', 'V', 'E', 'R', 'Y'],
+    ['W', 'O', 'N', 'D', 'E', 'R', 'S']
   ];
-  const allValidWords = solveBoggleBoard(fallbackGrid, 4, 4, 3);
+  const allValidWords = solveBoggleBoard(fallbackGrid, 7, 7, minWordLength);
 
   return {
-    rows: 4,
-    cols: 4,
-    size: 4,
+    rows: 7,
+    cols: 7,
+    size: 7,
     grid: fallbackGrid,
     allValidWords,
     totalWordCount: allValidWords.size,
-    targetWordCount: 4,
-    timeAllowedSec: 60,
-    minWordLength: 3,
-    maxScore: 45
+    targetWordCount,
+    timeAllowedSec,
+    minWordLength,
+    maxScore: 100,
+    levelTier
   };
 }
 
 /**
- * Generates Reflex Trail Challenges on Boggle Boards.
+ * Generates Reflex Trail Challenges on 7x7 Boggle Boards.
  */
 export function generateBoggleReflexChallenge(level: number, customSeed?: string | number): BoggleReflexTrailChallenge {
   const safeLevel = Math.max(1, Math.min(120, level));
@@ -318,9 +437,9 @@ export function generateBoggleReflexChallenge(level: number, customSeed?: string
   const wordsList = Array.from(board.allValidWords.keys());
 
   const targetWords = wordsList.filter(w => {
-    if (safeLevel <= 10) return w.length >= 3 && w.length <= 4;
-    if (safeLevel <= 30) return w.length >= 4 && w.length <= 5;
-    return w.length >= 5;
+    if (safeLevel <= 10) return w.length >= 3 && w.length <= 5;
+    if (safeLevel <= 25) return w.length >= 5 && w.length <= 7;
+    return w.length >= 7;
   });
 
   const chosenWord = targetWords.length > 0
@@ -339,6 +458,6 @@ export function generateBoggleReflexChallenge(level: number, customSeed?: string
       { id: 'opt-1', path: targetPath, displayLabel: chosenWord, isCorrect: true }
     ],
     correctAnswer: chosenWord,
-    targetTimeSec: safeLevel <= 10 ? 15 : 10
+    targetTimeSec: safeLevel <= 10 ? 20 : 15
   };
 }

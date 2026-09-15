@@ -1,4 +1,6 @@
 import React from 'react';
+import { useProgressStore } from '../../store/progress-store';
+import { computeAuthenticUserStats } from '../../engine/stats-engine/real-stats';
 
 interface CognitiveNeuralBackgroundProps {
   hoveredGameId?: string | null;
@@ -7,6 +9,8 @@ interface CognitiveNeuralBackgroundProps {
 export const CognitiveNeuralBackground: React.FC<CognitiveNeuralBackgroundProps> = ({
   hoveredGameId
 }) => {
+  const { games, attempts } = useProgressStore();
+  const { backgroundLabels } = computeAuthenticUserStats(games, attempts);
   return (
     <div 
       aria-hidden="true"
@@ -255,43 +259,53 @@ export const CognitiveNeuralBackground: React.FC<CognitiveNeuralBackgroundProps>
         </g>
       </svg>
 
-      {/* 3. Floating Cognitive Performance Micro-Labels (UI Metadata) */}
+      {/* 3. Floating Cognitive Performance Micro-Labels (Truth-Based Dynamic Telemetry) */}
       <div className="hidden lg:block absolute inset-0 pointer-events-none">
         
-        {/* Label 1: FOCUS +12% (Top Left) */}
-        <div className="absolute top-[14%] left-[7%] flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-[10px] font-mono tracking-widest text-slate-400 dark:text-slate-500 backdrop-blur-xs shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-amber-500/80 animate-pulse" />
-          <span>FOCUS</span>
-          <span className="text-amber-600 dark:text-amber-400 font-bold">+12%</span>
-        </div>
+        {/* Label 1 (Top Left) */}
+        {backgroundLabels[0] && (
+          <div className="absolute top-[14%] left-[7%] flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-[10px] font-mono tracking-widest text-slate-400 dark:text-slate-500 backdrop-blur-xs shadow-xs">
+            <span className={`w-1.5 h-1.5 rounded-full ${backgroundLabels[0].pulseColor} animate-pulse`} />
+            <span>{backgroundLabels[0].title}</span>
+            <span className={`font-bold ${backgroundLabels[0].color}`}>{backgroundLabels[0].value}</span>
+          </div>
+        )}
 
-        {/* Label 2: PROCESSING SPEED +15% (Top Right) */}
-        <div className="absolute top-[15%] right-[7%] flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-[10px] font-mono tracking-widest text-slate-400 dark:text-slate-500 backdrop-blur-xs shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-sky-500/80 animate-pulse" />
-          <span>PROCESSING SPEED</span>
-          <span className="text-sky-600 dark:text-sky-400 font-bold">+15%</span>
-        </div>
+        {/* Label 2 (Top Right) */}
+        {backgroundLabels[1] && (
+          <div className="absolute top-[15%] right-[7%] flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-[10px] font-mono tracking-widest text-slate-400 dark:text-slate-500 backdrop-blur-xs shadow-xs">
+            <span className={`w-1.5 h-1.5 rounded-full ${backgroundLabels[1].pulseColor} animate-pulse`} />
+            <span>{backgroundLabels[1].title}</span>
+            <span className={`font-bold ${backgroundLabels[1].color}`}>{backgroundLabels[1].value}</span>
+          </div>
+        )}
 
-        {/* Label 3: REASONING +9% (Mid-Low Left) */}
-        <div className="absolute top-[52%] left-[4%] flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-[10px] font-mono tracking-widest text-slate-400 dark:text-slate-500 backdrop-blur-xs shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 animate-pulse" />
-          <span>REASONING</span>
-          <span className="text-emerald-600 dark:text-emerald-400 font-bold">+9%</span>
-        </div>
+        {/* Label 3 (Mid-Low Left) */}
+        {backgroundLabels[2] && (
+          <div className="absolute top-[52%] left-[4%] flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-[10px] font-mono tracking-widest text-slate-400 dark:text-slate-500 backdrop-blur-xs shadow-xs">
+            <span className={`w-1.5 h-1.5 rounded-full ${backgroundLabels[2].pulseColor} animate-pulse`} />
+            <span>{backgroundLabels[2].title}</span>
+            <span className={`font-bold ${backgroundLabels[2].color}`}>{backgroundLabels[2].value}</span>
+          </div>
+        )}
 
-        {/* Label 4: MEMORY 78% (Mid Right) */}
-        <div className="absolute top-[50%] right-[4%] flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-[10px] font-mono tracking-widest text-slate-400 dark:text-slate-500 backdrop-blur-xs shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-purple-500/80 animate-pulse" />
-          <span>MEMORY BUFFER</span>
-          <span className="text-purple-600 dark:text-purple-400 font-bold">78%</span>
-        </div>
+        {/* Label 4 (Mid Right) */}
+        {backgroundLabels[3] && (
+          <div className="absolute top-[50%] right-[4%] flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-[10px] font-mono tracking-widest text-slate-400 dark:text-slate-500 backdrop-blur-xs shadow-xs">
+            <span className={`w-1.5 h-1.5 rounded-full ${backgroundLabels[3].pulseColor} animate-pulse`} />
+            <span>{backgroundLabels[3].title}</span>
+            <span className={`font-bold ${backgroundLabels[3].color}`}>{backgroundLabels[3].value}</span>
+          </div>
+        )}
 
-        {/* Label 5: ACCURACY 91% (Bottom Right) */}
-        <div className="absolute top-[75%] right-[9%] flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-[10px] font-mono tracking-widest text-slate-400 dark:text-slate-500 backdrop-blur-xs shadow-xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-teal-500/80 animate-pulse" />
-          <span>ACCURACY INDEX</span>
-          <span className="text-teal-600 dark:text-teal-400 font-bold">91%</span>
-        </div>
+        {/* Label 5 (Bottom Right) */}
+        {backgroundLabels[4] && (
+          <div className="absolute top-[75%] right-[9%] flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/70 dark:bg-slate-900/60 border border-slate-200/60 dark:border-slate-800/60 text-[10px] font-mono tracking-widest text-slate-400 dark:text-slate-500 backdrop-blur-xs shadow-xs">
+            <span className={`w-1.5 h-1.5 rounded-full ${backgroundLabels[4].pulseColor} animate-pulse`} />
+            <span>{backgroundLabels[4].title}</span>
+            <span className={`font-bold ${backgroundLabels[4].color}`}>{backgroundLabels[4].value}</span>
+          </div>
+        )}
 
       </div>
 
