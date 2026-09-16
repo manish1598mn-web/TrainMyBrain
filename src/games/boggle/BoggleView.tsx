@@ -277,11 +277,11 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
           <span className="px-2.5 py-0.5 rounded-lg bg-rose-500/15 text-rose-600 dark:text-rose-400 font-bold text-xs font-mono uppercase tracking-wider">
             7x7 BOGGLE
           </span>
-          <span className="text-[11px] font-mono text-slate-500 flex items-center gap-1">
+          <span className="text-[11px] font-mono text-slate-700 dark:text-slate-200 font-semibold flex items-center gap-1">
             <Target className="w-3.5 h-3.5 text-teal-600" />
             <span>Target: <strong className={isGoalReached ? 'text-emerald-500 font-black' : 'text-slate-700 dark:text-slate-200'}>{foundWords.size}/{targetWords}</strong></span>
           </span>
-          <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 font-bold">
+          <span className="hidden sm:inline-block text-[10px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold font-bold">
             {board.levelTier.description}
           </span>
           {combo >= 2 && (
@@ -322,13 +322,13 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
       {/* 2. Active Word Formation Ribbon */}
       <div className="w-full flex items-center justify-between px-4 py-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs mb-2.5 min-h-[3.2rem]">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-mono font-bold text-slate-400 uppercase">Word:</span>
+          <span className="text-xs font-mono font-bold text-slate-600 dark:text-slate-300 uppercase">Word:</span>
           {currentPath.length > 0 ? (
             <div className="flex items-center gap-1.5">
               <span className="text-xl sm:text-2xl font-black font-mono tracking-widest text-rose-600 dark:text-rose-400 animate-in zoom-in-95">
                 {currentWord}
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-bold">
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200 dark:border-slate-600">
                 {currentWord.length} letters
               </span>
             </div>
@@ -385,7 +385,7 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
       )}
 
       {/* 3. The 7x7 Tactile Boggle Dice Grid */}
-      <div className="w-full flex items-center justify-center p-3 rounded-3xl bg-slate-100/90 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 shadow-inner">
+      <div className="w-full flex items-center justify-center p-3 rounded-3xl bg-slate-100/90 dark:bg-slate-900/90 border border-slate-200 dark:border-slate-700 shadow-inner">
         <div
           ref={boardRef}
           className="grid grid-cols-7 gap-1.5 sm:gap-2 select-none w-full max-w-[420px] sm:max-w-[480px] aspect-square"
@@ -406,7 +406,7 @@ export const BoggleView: React.FC<BoggleViewProps> = ({
                       ? 'bg-rose-600 text-white border-b-2 sm:border-b-4 border-rose-800 ring-4 ring-rose-400/60 shadow-lg scale-105 z-10'
                       : isSelected
                       ? 'bg-rose-500 text-white border-b-2 sm:border-b-4 border-rose-700 ring-2 ring-rose-400/40 shadow-md z-0'
-                      : 'bg-white dark:bg-slate-850 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 border-b-2 sm:border-b-4 border-b-slate-300 dark:border-b-slate-900 shadow-xs hover:border-b-2 hover:translate-y-[1px]'
+                      : 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600/90 border-b-2 sm:border-b-4 border-b-slate-300 dark:border-b-slate-900 shadow-xs hover:border-b-2 hover:translate-y-[1px]'
                   }`}
                 >
                   <span>{letter}</span>

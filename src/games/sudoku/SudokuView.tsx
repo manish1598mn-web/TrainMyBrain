@@ -242,7 +242,7 @@ export const SudokuView: React.FC<SudokuViewProps> = ({
           className={`px-3 py-1 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition-all ${
             hintTier > 0
               ? 'bg-amber-500 text-white shadow-md'
-              : 'bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100'
+              : 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700 hover:bg-amber-100 dark:hover:bg-amber-900/40'
           }`}
         >
           <Lightbulb className="w-3.5 h-3.5" />
@@ -251,7 +251,7 @@ export const SudokuView: React.FC<SudokuViewProps> = ({
 
         <button
           onClick={() => setShowCandidates(!showCandidates)}
-          className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-mono text-slate-600 dark:text-slate-300 flex items-center gap-1 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 transition-colors"
+          className="px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-mono font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1 border border-slate-200 dark:border-slate-600 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
         >
           <Eye className="w-3.5 h-3.5" />
           <span>{showCandidates ? 'Hide Pencil Marks' : 'Show Pencil Marks'}</span>
@@ -292,7 +292,7 @@ export const SudokuView: React.FC<SudokuViewProps> = ({
                     isSelected
                       ? 'bg-purple-600 text-white ring-4 ring-purple-300 dark:ring-purple-700 z-10 scale-105'
                       : isInitial
-                      ? 'bg-slate-100 dark:bg-slate-850 font-black text-slate-900 dark:text-white'
+                      ? 'bg-slate-100 dark:bg-slate-800 font-black text-slate-900 dark:text-white border border-slate-200 dark:border-slate-600/70 shadow-inner'
                       : val !== null
                       ? 'bg-white dark:bg-slate-900 font-bold text-purple-600 dark:text-purple-400'
                       : 'bg-white dark:bg-slate-900 hover:bg-purple-50 dark:hover:bg-slate-800 text-slate-400'
@@ -303,7 +303,7 @@ export const SudokuView: React.FC<SudokuViewProps> = ({
                   ) : showCandidates ? (
                     // Candidate Possibility Marks
                     <div
-                      className="grid gap-0 w-full h-full p-0.5 text-[7px] leading-tight text-slate-400 dark:text-slate-500 items-center justify-items-center"
+                      className="grid gap-0 w-full h-full p-0.5 text-[7px] leading-tight text-slate-500 dark:text-slate-300 font-bold items-center justify-items-center"
                       style={{
                         gridTemplateColumns: `repeat(${puzzle.boxCols}, minmax(0, 1fr))`
                       }}
@@ -337,7 +337,7 @@ export const SudokuView: React.FC<SudokuViewProps> = ({
             key={d}
             onClick={() => handleFullCellInput(d)}
             disabled={!selectedCell || puzzle.initialGrid[selectedCell.r][selectedCell.c] !== null}
-            className="py-3 rounded-2xl font-mono font-black text-lg bg-white dark:bg-slate-800 text-purple-700 dark:text-purple-300 border-2 border-purple-200 dark:border-purple-800 hover:bg-purple-50 dark:hover:bg-purple-950/40 shadow-sm active:scale-95 disabled:opacity-30 transition-all flex items-center justify-center"
+            className="py-3 rounded-2xl font-mono font-black text-lg bg-white dark:bg-slate-800 text-purple-700 dark:text-purple-200 border-2 border-purple-200 dark:border-purple-600/70 hover:bg-purple-50 dark:hover:bg-purple-950/50 hover:border-purple-400 dark:hover:border-purple-400 shadow-sm active:scale-95 disabled:opacity-20 transition-all flex items-center justify-center"
           >
             {d}
           </button>

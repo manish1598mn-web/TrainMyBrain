@@ -99,7 +99,7 @@ export const AIAdminModal: React.FC<AIAdminModalProps> = ({ isOpen, onClose }) =
       <div className="relative w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
         
         {/* Modal Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-sky-500/15 text-sky-600 dark:text-sky-400 flex items-center justify-center">
               <Cpu className="w-6 h-6 stroke-[2.5]" />
@@ -340,7 +340,7 @@ export const AIAdminModal: React.FC<AIAdminModalProps> = ({ isOpen, onClose }) =
               </div>
 
               {/* Trigger Batch Generation Panel */}
-              <div className="p-4 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200/90 dark:border-slate-750 space-y-3">
+              <div className="p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 space-y-3">
                 <h4 className="text-xs font-bold uppercase font-mono tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
                   <Sparkles className="w-4 h-4 text-amber-500" />
                   Pre-Generate Content Batch
@@ -403,7 +403,7 @@ export const AIAdminModal: React.FC<AIAdminModalProps> = ({ isOpen, onClose }) =
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-850/70 flex items-center justify-between text-xs font-mono text-slate-400">
+        <div className="p-4 border-t border-slate-200/80 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-800/70 flex items-center justify-between text-xs font-mono text-slate-400">
           <span>✓ Zero-Latency Architecture Enabled</span>
           <button
             onClick={onClose}

@@ -171,9 +171,9 @@ export const ZebraView: React.FC<ZebraViewProps> = ({
         </div>
 
         {/* Premises & Clues Box */}
-        <div className="w-full rounded-2xl bg-slate-50 dark:bg-slate-850 p-4 border border-slate-200/60 dark:border-slate-800 mb-3.5 space-y-1.5">
+        <div className="w-full rounded-2xl bg-slate-50 dark:bg-slate-800/80 p-4 border border-slate-200/60 dark:border-slate-700 shadow-inner mb-3.5 space-y-1.5">
           {currentPuzzle.premises.map((premise, idx) => (
-            <p key={idx} className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 font-medium leading-relaxed">
+            <p key={idx} className="text-xs sm:text-sm text-slate-800 dark:text-slate-100 font-medium leading-relaxed">
               {premise}
             </p>
           ))}
@@ -210,10 +210,10 @@ export const ZebraView: React.FC<ZebraViewProps> = ({
             key={opt.id}
             onClick={() => handleSelectOption(opt)}
             disabled={!isReady || isPaused || feedback !== null}
-            className="py-3 px-4 rounded-2xl font-bold text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 border-2 border-slate-200 dark:border-slate-700 hover:border-emerald-500 dark:hover:border-emerald-500 hover:bg-emerald-50/50 dark:hover:bg-emerald-950/40 shadow-xs active:scale-95 transition-all flex items-center justify-between group disabled:opacity-40"
+            className="py-3.5 px-4 rounded-2xl font-bold text-sm bg-white dark:bg-slate-800 text-slate-800 dark:text-white border-2 border-slate-200 dark:border-slate-600 hover:border-emerald-500 dark:hover:border-emerald-400 hover:bg-emerald-50/50 dark:hover:bg-slate-700/80 shadow-xs active:scale-95 transition-all flex items-center justify-between group disabled:opacity-40"
           >
             <span className="font-mono tracking-wide">{opt.label}</span>
-            <span className="text-[10px] font-mono text-slate-400 group-hover:text-emerald-500 px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-700">
+            <span className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-200 group-hover:text-emerald-500 dark:group-hover:text-emerald-400 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600">
               {idx + 1}
             </span>
           </button>

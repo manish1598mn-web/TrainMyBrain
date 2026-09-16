@@ -265,12 +265,12 @@ export const AnzanView: React.FC<AnzanViewProps> = ({
             Round {roundIndex + 1} of {challenge.totalRounds}
           </span>
           {currentRound.hasAdvancedOperators && (
-            <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-500 text-[10px] font-bold font-mono">
+            <span className="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-600 dark:text-amber-300 text-[10px] font-bold font-mono border border-amber-300 dark:border-amber-700/60">
               +, -, ×, ÷, %
             </span>
           )}
         </div>
-        <div className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400">
+        <div className="text-xs font-mono font-semibold text-slate-600 dark:text-slate-300">
           {currentRound.steps.length} Terms • {currentRound.digitCount}-Digit
         </div>
       </div>
@@ -355,8 +355,8 @@ export const AnzanView: React.FC<AnzanViewProps> = ({
             className={`
               h-11 sm:h-12 rounded-xl font-mono font-bold text-base transition-all active:scale-98 flex items-center justify-center
               ${key === 'BACK'
-                ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
-                : 'bg-white dark:bg-slate-800/80 hover:bg-slate-50 text-slate-800 dark:text-slate-100 border border-slate-200/90 dark:border-slate-700'
+                ? 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600'
+                : 'bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700/80 text-slate-900 dark:text-white border border-slate-200/90 dark:border-slate-600 shadow-xs'
               }
               disabled:opacity-30 disabled:pointer-events-none
             `}

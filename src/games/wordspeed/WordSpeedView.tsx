@@ -267,7 +267,7 @@ export const WordSpeedView: React.FC<WordSpeedViewProps> = ({
 
         {/* Sub-Prompt / Sentence Context with Glowing Blank */}
         {currentQ.subPrompt && (
-          <p className="text-sm sm:text-base text-slate-800 dark:text-slate-100 font-medium leading-relaxed max-w-xl">
+          <p className="text-sm sm:text-base text-slate-800 dark:text-white font-semibold leading-relaxed max-w-xl">
             {currentQ.subPrompt.split('_____').map((part, i, arr) => (
               <React.Fragment key={i}>
                 {part}
@@ -298,7 +298,7 @@ export const WordSpeedView: React.FC<WordSpeedViewProps> = ({
           const isSelected = selectedOption === opt;
           const isCorrectAnswer = opt.toUpperCase() === currentQ.correctAnswer.toUpperCase();
 
-          let cardStyle = 'bg-white dark:bg-slate-850 text-slate-800 dark:text-slate-100 border border-slate-200 dark:border-slate-700 border-b-4 border-b-slate-300 dark:border-b-slate-900 hover:border-sky-400 dark:hover:border-sky-500 hover:bg-sky-50/50 dark:hover:bg-sky-950/30 active:border-b-2 active:translate-y-0.5';
+          let cardStyle = 'bg-white dark:bg-slate-800 text-slate-800 dark:text-white border-2 border-slate-200 dark:border-slate-600/80 border-b-4 border-b-slate-300 dark:border-b-slate-900 hover:border-sky-400 dark:hover:border-sky-400 hover:bg-sky-50/50 dark:hover:bg-slate-700/80 active:border-b-2 active:translate-y-0.5 shadow-xs';
 
           if (isAnswerRevealed) {
             if (isCorrectAnswer) {
@@ -306,7 +306,7 @@ export const WordSpeedView: React.FC<WordSpeedViewProps> = ({
             } else if (isSelected && !isCorrectAnswer) {
               cardStyle = 'bg-rose-600 text-white border-b-4 border-b-rose-800 ring-2 ring-rose-400/50 animate-shake';
             } else {
-              cardStyle = 'bg-slate-100 dark:bg-slate-900 text-slate-400 dark:text-slate-600 border border-slate-200/50 dark:border-slate-800/50 opacity-40';
+              cardStyle = 'bg-slate-100 dark:bg-slate-900/80 text-slate-400 dark:text-slate-400 border border-slate-200/50 dark:border-slate-700/50 opacity-40';
             }
           }
 
@@ -323,7 +323,7 @@ export const WordSpeedView: React.FC<WordSpeedViewProps> = ({
                     ? 'bg-emerald-700 text-white'
                     : isAnswerRevealed && isSelected
                     ? 'bg-rose-700 text-white'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400'
+                    : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 font-bold border border-slate-200/80 dark:border-slate-600'
                 }`}>
                   {letter}
                 </span>
